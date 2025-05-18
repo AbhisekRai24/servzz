@@ -129,14 +129,18 @@ class CafeCard extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.red[700],
+              color: Color(0xFFA62123),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
             ),
             child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+
+
+                
+              },
               child: Text(
                 "View",
                 style: TextStyle(color: Colors.white),

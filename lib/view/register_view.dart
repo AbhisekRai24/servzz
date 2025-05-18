@@ -17,29 +17,28 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
+      appBar: AppBar(
+        backgroundColor: Colors.red[700],
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Go back
+          },
+        ),
+        title: Text(
+          "Register",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[200]),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back arrow
-              IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context); // Go back
-                },
-              ),
-              SizedBox(height: 10),
-
-              // Title
-              Center(
-                child: Text(
-                  "Register",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 30),
+              // Removed back arrow and title here
 
               // Email
               Text("Enter Email", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -101,7 +100,7 @@ class _RegisterViewState extends State<RegisterView> {
                   contentPadding: EdgeInsets.symmetric(horizontal: 20),
                 ),
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 100),
 
               // Register Button
               SizedBox(
@@ -109,15 +108,16 @@ class _RegisterViewState extends State<RegisterView> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle registration
+                    
+                    
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[700],
+                    backgroundColor: Color(0xFFA62123),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  child: Text("Register", style: TextStyle(fontSize: 18)),
+                  child: Text("Register", style: TextStyle(fontSize: 18,color: Colors.white)),
                 ),
               ),
             ],

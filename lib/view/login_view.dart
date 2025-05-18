@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:servzz/view/home_page_view.dart';
 import 'package:servzz/view/register_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -45,7 +46,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black54,
+                    color: Colors.black,
                     blurRadius: 10,
                     spreadRadius: 5,
                   ),
@@ -73,6 +74,7 @@ class _LoginViewState extends State<LoginView> {
                       controller: emailController,
                       decoration: InputDecoration(
                         hintText: "Email",
+                        prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -111,7 +113,7 @@ class _LoginViewState extends State<LoginView> {
                           },
                           child: Text(
                             "Sign up",
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold,),
                           ),
                         ),
                       ],
@@ -124,10 +126,13 @@ class _LoginViewState extends State<LoginView> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          // Handle login
+                           Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => HomePageView()),
+                            );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[700],
+                          backgroundColor: Color(0xFFA62123),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
