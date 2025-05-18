@@ -21,7 +21,7 @@ class HomePageView extends StatelessWidget {
               ),
               SizedBox(width: 12),
               Text(
-                'Servzz',
+                'Mark',
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ],
