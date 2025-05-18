@@ -31,7 +31,7 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
 
-          // Foreground Card with form
+          // Card
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -91,6 +91,7 @@ class _LoginViewState extends State<LoginView> {
                       obscureText: true,
                       decoration: InputDecoration(
                         hintText: "Password",
+                        prefixIcon: Icon(Icons.password),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

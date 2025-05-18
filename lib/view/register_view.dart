@@ -38,7 +38,7 @@ class _RegisterViewState extends State<RegisterView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Removed back arrow and title here
+              
 
               // Email
               Text("Enter Email", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -47,6 +47,7 @@ class _RegisterViewState extends State<RegisterView> {
                 controller: emailController,
                 decoration: InputDecoration(
                   hintText: "Enter your email",
+                  prefixIcon: Icon(Icons.email),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
