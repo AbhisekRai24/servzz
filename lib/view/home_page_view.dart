@@ -27,13 +27,13 @@ class HomePageView extends StatelessWidget {
             ],
           ),
         ),
-        ListTile(
-          leading: Icon(Icons.home),
-          title: Text('Home'),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
+        // ListTile(
+        //   leading: Icon(Icons.home),
+        //   title: Text('Home'),
+        //   onTap: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
         Spacer(),
         ListTile(
           leading: Icon(Icons.logout, color: Colors.red),
