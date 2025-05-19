@@ -50,11 +50,11 @@ class HomePageView extends StatelessWidget {
       ],
     ),
   ),
-  // appBar: AppBar(
-  //   backgroundColor: Colors.grey[200],
-  //   elevation: 0,
-  //   iconTheme: IconThemeData(color: Colors.black),
-  // ),
+  appBar: AppBar(
+    backgroundColor: Colors.grey[200],
+    elevation: 0,
+    iconTheme: IconThemeData(color: Colors.black),
+  ),
   body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -104,15 +104,15 @@ class HomePageView extends StatelessWidget {
                 SizedBox(height: 20),
 
                 // Banner
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    "assets/image/food_banner.jpg", 
-                    fit: BoxFit.cover,
-                    height: 180,
-                    width: double.infinity,
-                  ),
-                ),
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(20),
+                //   child: Image.asset(
+                //     "assets/image/food_banner.jpg", 
+                //     fit: BoxFit.cover,
+                //     height: 180,
+                //     width: double.infinity,
+                //   ),
+                // ),
                 SizedBox(height: 20),
 
                 // Cafes section
