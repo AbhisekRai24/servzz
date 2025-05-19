@@ -27,13 +27,13 @@ class HomePageView extends StatelessWidget {
             ],
           ),
         ),
-        // ListTile(
-        //   leading: Icon(Icons.home),
-        //   title: Text('Home'),
-        //   onTap: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
+        ListTile(
+          leading: Icon(Icons.home),
+          title: Text('Home'),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
         Spacer(),
         ListTile(
           leading: Icon(Icons.logout, color: Colors.red),
@@ -50,11 +50,11 @@ class HomePageView extends StatelessWidget {
       ],
     ),
   ),
-  appBar: AppBar(
-    backgroundColor: Colors.grey[200],
-    elevation: 0,
-    iconTheme: IconThemeData(color: Colors.black),
-  ),
+  // appBar: AppBar(
+  //   backgroundColor: Colors.grey[200],
+  //   elevation: 0,
+  //   iconTheme: IconThemeData(color: Colors.black),
+  // ),
   body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
