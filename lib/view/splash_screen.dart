@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(Duration(seconds: 4), () {
       Navigator.pushReplacement(
         context,
-        // MaterialPageRoute(builder: (context) => LoginView()),
+        MaterialPageRoute(builder: (context) => LoginView()),
       );
     });
   }
@@ -42,7 +42,7 @@ Widget build(BuildContext context) {
           ),
         ),
 
-        // Overlapping white card
+        
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
