@@ -101,25 +101,25 @@ class _LoginViewState extends State<LoginView> {
                     SizedBox(height: 16),
 
                     // Sign up
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Don't have an account? "),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RegisterView()),
-                            );
-                          },
-                          child: Text(
-                            "Sign up",
-                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold,),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text("Don't have an account? "),
+                    //     GestureDetector(
+                    //       onTap: () {
+                    //         Navigator.push(
+                    //           context,
+                    //           MaterialPageRoute(builder: (context) => RegisterView()),
+                    //         );
+                    //       },
+                    //       child: Text(
+                    //         "Sign up",
+                    //         style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold,),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
+                    // SizedBox(height: 20),
 
                     // Login button
                     SizedBox(
