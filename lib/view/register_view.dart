@@ -41,20 +41,20 @@ class _RegisterViewState extends State<RegisterView> {
               
 
               // Email
-              Text("Enter Email", style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  hintText: "Enter your email",
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                ),
-              ),
-              SizedBox(height: 16),
+              // Text("Enter Email", style: TextStyle(fontWeight: FontWeight.bold)),
+              // SizedBox(height: 6),
+              // TextField(
+              //   controller: emailController,
+              //   decoration: InputDecoration(
+              //     hintText: "Enter your email",
+              //     prefixIcon: Icon(Icons.email),
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(30),
+              //     ),
+              //     contentPadding: EdgeInsets.symmetric(horizontal: 20),
+              //   ),
+              // ),
+              // SizedBox(height: 16),
 
               // Name
               Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),
