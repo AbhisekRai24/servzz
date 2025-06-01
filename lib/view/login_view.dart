@@ -2,24 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:servzz/view/home_page_view.dart';
 import 'package:servzz/view/register_view.dart';
 
-class LoginView extends StatefulWidget {
+class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
   @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  @override
   Widget build(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-         
           Container(
             height: MediaQuery.of(context).size.height * 0.4,
             width: double.infinity,
@@ -31,7 +25,6 @@ class _LoginViewState extends State<LoginView> {
             ),
           ),
 
-          // Card
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -67,7 +60,6 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     SizedBox(height: 20),
 
-                    // Email
                     Text("Email", style: TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 6),
                     TextField(
@@ -83,7 +75,6 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     SizedBox(height: 16),
 
-                    // Password
                     Text("Password", style: TextStyle(fontWeight: FontWeight.bold)),
                     SizedBox(height: 6),
                     TextField(
@@ -100,37 +91,15 @@ class _LoginViewState extends State<LoginView> {
                     ),
                     SizedBox(height: 16),
 
-                    // Sign up
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text("Don't have an account? "),
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(builder: (context) => RegisterView()),
-                    //         );
-                    //       },
-                    //       child: Text(
-                    //         "Sign up",
-                    //         style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold,),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // SizedBox(height: 20),
-
-                    // Login button
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                           Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePageView()),
-                            );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePageView()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFA62123),

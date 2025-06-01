@@ -176,7 +176,7 @@ class CafeCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(8),
             child: Image.asset(
-              "assets/image/login_image.jpg", // Replace with actual logo
+              "assets/image/login_image.jpg", 
               height: 100,
             ),
           ),

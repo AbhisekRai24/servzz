@@ -20,8 +20,6 @@ ThemeData getApplicationTheme(){
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5),
                ),
-
-            
           ),
         ),
 
