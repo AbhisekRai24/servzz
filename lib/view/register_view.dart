@@ -57,19 +57,19 @@ class _RegisterViewState extends State<RegisterView> {
               SizedBox(height: 16),
 
               // Name
-              Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 6),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: "Enter your name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                ),
-              ),
-              SizedBox(height: 16),
+              // Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),
+              // SizedBox(height: 6),
+              // TextField(
+              //   controller: nameController,
+              //   decoration: InputDecoration(
+              //     hintText: "Enter your name",
+              //     border: OutlineInputBorder(
+              //       borderRadius: BorderRadius.circular(30),
+              //     ),
+              //     contentPadding: EdgeInsets.symmetric(horizontal: 20),
+              //   ),
+              // ),
+              // SizedBox(height: 16),
 
               // Password
               Text("Password", style: TextStyle(fontWeight: FontWeight.bold)),

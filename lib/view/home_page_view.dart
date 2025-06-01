@@ -132,16 +132,16 @@ class HomePageView extends StatelessWidget {
                 SizedBox(height: 12),
 
                  // Cafe cards (updated)
-              Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: List.generate(10, (index) =>
-                      SizedBox(
-                        width: (MediaQuery.of(context).size.width - 44) / 2,
-                        child: CafeCard(),
-                      ),
-                    ),
-                  ),
+              // Wrap(
+              //       spacing: 12,
+              //       runSpacing: 12,
+              //       children: List.generate(10, (index) =>
+              //         SizedBox(
+              //           width: (MediaQuery.of(context).size.width - 44) / 2,
+              //           child: CafeCard(),
+              //         ),
+              //       ),
+              //     ),
 
                 SizedBox(height:5),
               ],
@@ -176,7 +176,7 @@ class CafeCard extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(8),
             child: Image.asset(
-              "assets/image/login_image.jpg", // Replace with actual logo
+              "assets/image/login_image.jpg", 
               height: 100,
             ),
           ),
