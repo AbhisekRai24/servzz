@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:servzz/common/my_snack_bar.dart';
+import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -9,9 +12,7 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: [
           DrawerHeader(
-            decoration: const BoxDecoration(
-              color: Color(0xFFA62123),
-            ),
+            decoration: const BoxDecoration(color: Color(0xFFA62123)),
             child: Row(
               children: const [
                 CircleAvatar(
@@ -53,13 +54,19 @@ class AppDrawer extends StatelessWidget {
           const Spacer(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text(
-              'Logout',
-              style: TextStyle(color: Colors.red),
-            ),
+            title: const Text('Logout', style: TextStyle(color: Colors.red)),
             onTap: () {
-              Navigator.pop(context);
-              // Add logout logic here if needed
+              // Navigator.pop(context);
+
+              // Show snackbar message
+              showMySnackBar(
+                context: context,
+                message: 'Logging out...',
+                color: Colors.red,
+              );
+
+              // Call logout method from HomeViewModel
+              context.read<HomeViewModel>().logout(context);
             },
           ),
         ],
