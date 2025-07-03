@@ -15,7 +15,6 @@ import 'package:servzz/features/auth/domain/use_case/user_register_usecase.dart'
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
-import 'package:servzz/features/splash/presentation/view/splash_view.dart';
 import 'package:servzz/features/splash/presentation/view_model/splash_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -144,9 +143,18 @@ Future<void> _initAuthModule() async {
   );
 }
 
+// Future<void> _initHomeModule() async {
+//   serviceLocator.registerFactory(
+//     () => HomeViewModel(loginViewModel: serviceLocator<LoginViewModel>()),
+//   );
+// }
+
 Future<void> _initHomeModule() async {
   serviceLocator.registerFactory(
-    () => HomeViewModel(loginViewModel: serviceLocator<LoginViewModel>()),
+    () => HomeViewModel(
+      loginViewModel: serviceLocator<LoginViewModel>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(), 
+    ),
   );
 }
 

@@ -22,127 +22,6 @@ class _RegisterViewState extends State<RegisterView> {
 
   final _formKey = GlobalKey<FormState>();
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: Colors.grey[200],
-  //     appBar: AppBar(
-  //       backgroundColor: Colors.red[700],
-  //       elevation: 0,
-  //       leading: IconButton(
-  //         icon: Icon(Icons.arrow_back),
-  //         onPressed: () {
-  //           Navigator.pop(context); // Go back
-  //         },
-  //       ),
-  //       title: Text(
-  //         "Register",
-  //         style: TextStyle(
-  //           fontWeight: FontWeight.bold,
-  //           color: Colors.grey[200],
-  //         ),
-  //       ),
-  //       centerTitle: true,
-  //     ),
-  //     body: SingleChildScrollView(
-  //       child: Padding(
-  //         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             // Email
-  //             Text(
-  //               "Enter Email",
-  //               style: TextStyle(fontWeight: FontWeight.bold),
-  //             ),
-  //             SizedBox(height: 6),
-  //             TextField(
-  //               controller: emailController,
-  //               decoration: InputDecoration(
-  //                 hintText: "Enter your email",
-  //                 prefixIcon: Icon(Icons.email),
-  //                 border: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.circular(30),
-  //                 ),
-  //                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-  //               ),
-  //             ),
-  //             SizedBox(height: 16),
-
-  //             // Name
-  //             // Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),
-  //             // SizedBox(height: 6),
-  //             // TextField(
-  //             //   controller: nameController,
-  //             //   decoration: InputDecoration(
-  //             //     hintText: "Enter your name",
-  //             //     border: OutlineInputBorder(
-  //             //       borderRadius: BorderRadius.circular(30),
-  //             //     ),
-  //             //     contentPadding: EdgeInsets.symmetric(horizontal: 20),
-  //             //   ),
-  //             // ),
-  //             // SizedBox(height: 16),
-
-  //             // Password
-  //             Text("Password", style: TextStyle(fontWeight: FontWeight.bold)),
-  //             SizedBox(height: 6),
-  //             TextField(
-  //               controller: passwordController,
-  //               obscureText: true,
-  //               decoration: InputDecoration(
-  //                 hintText: "Password",
-  //                 border: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.circular(30),
-  //                 ),
-  //                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-  //               ),
-  //             ),
-  //             SizedBox(height: 16),
-
-  //             // Confirm Password
-  //             Text(
-  //               "Confirm Password",
-  //               style: TextStyle(fontWeight: FontWeight.bold),
-  //             ),
-  //             SizedBox(height: 6),
-  //             TextField(
-  //               controller: confirmPasswordController,
-  //               obscureText: true,
-  //               decoration: InputDecoration(
-  //                 hintText: "Confirm password",
-  //                 border: OutlineInputBorder(
-  //                   borderRadius: BorderRadius.circular(30),
-  //                 ),
-  //                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-  //               ),
-  //             ),
-  //             SizedBox(height: 100),
-
-  //             // Register Button
-  //             SizedBox(
-  //               width: double.infinity,
-  //               height: 50,
-  //               child: ElevatedButton(
-  //                 onPressed: () {},
-  //                 style: ElevatedButton.styleFrom(
-  //                   backgroundColor: Color(0xFFA62123),
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(15),
-  //                   ),
-  //                 ),
-  //                 child: Text(
-  //                   "Register",
-  //                   style: TextStyle(fontSize: 18, color: Colors.white),
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,9 +31,7 @@ class _RegisterViewState extends State<RegisterView> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Go back
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Register",
@@ -167,16 +44,18 @@ class _RegisterViewState extends State<RegisterView> {
       ),
       body: BlocConsumer<RegisterViewModel, RegisterState>(
         listener: (context, state) {
-          if (state.isSuccess) {
+          if (state.isSuccess && !state.isLoading) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Registration Successful')),
             );
-            // Optionally navigate away after registration
-            // Navigator.pop(context);
-          }
-          if (!state.isSuccess && !state.isLoading) {
-            // You might handle failure by showing snackbar if you want,
-            // but it is handled inside your bloc by `showMySnackBar` already
+            // Optionally clear the form or navigate away here
+          } else if (!state.isSuccess && !state.isLoading) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Registration Failed. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -188,7 +67,6 @@ class _RegisterViewState extends State<RegisterView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Email
                     const Text(
                       "Enter Email",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -207,16 +85,17 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please enter your email';
-                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value))
+                        }
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                           return 'Enter a valid email';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
 
-                    // Username
                     const Text(
                       "Username",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -234,14 +113,14 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please enter a username';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
 
-                    // First Name
                     const Text(
                       "First Name",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -259,14 +138,14 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please enter your first name';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
 
-                    // Last Name
                     const Text(
                       "Last Name",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -284,14 +163,14 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please enter your last name';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
 
-                    // Phone (Optional)
                     const Text(
                       "Phone (optional)",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -312,7 +191,6 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Password
                     const Text(
                       "Password",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -331,16 +209,17 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please enter your password';
-                        if (value.length < 6)
+                        }
+                        if (value.length < 6) {
                           return 'Password must be at least 6 characters';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
 
-                    // Confirm Password
                     const Text(
                       "Confirm Password",
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -359,16 +238,17 @@ class _RegisterViewState extends State<RegisterView> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty)
+                        if (value == null || value.isEmpty) {
                           return 'Please confirm your password';
-                        if (value != passwordController.text)
+                        }
+                        if (value != passwordController.text) {
                           return 'Passwords do not match';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 40),
 
-                    // Register Button
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -390,8 +270,7 @@ class _RegisterViewState extends State<RegisterView> {
                                         phone: phoneController.text.trim(),
                                         password:
                                             passwordController.text.trim(),
-                                        image:
-                                            null, // You can handle this later
+                                        image: null,
                                       ),
                                     );
                                   }

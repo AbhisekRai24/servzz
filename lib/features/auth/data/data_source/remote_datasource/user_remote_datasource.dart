@@ -39,7 +39,7 @@ class UserRemoteDataSource implements IUserDatasource {
         ApiEndpoints.register,
         data: studentApiModel.toJson(),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return;
       } else {
         throw Exception(
