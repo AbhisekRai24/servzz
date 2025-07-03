@@ -11,8 +11,9 @@ class UserApiModel extends Equatable {
   final String firstName;
   final String lastName;
   final String? image;
-  final String phone;
+  final String? phone;
   final String username;
+  final String email;
   final String password;
 
   const UserApiModel({
@@ -20,8 +21,9 @@ class UserApiModel extends Equatable {
     required this.firstName,
     required this.lastName,
     this.image,
-    required this.phone,
+    this.phone,
     required this.username,
+    required this.email,
     required this.password,
   });
 
@@ -40,6 +42,7 @@ class UserApiModel extends Equatable {
       image: entity.image,
       phone: entity.phone,
       username: entity.username,
+      email: entity.email,
       password: entity.password,
     );
   }
@@ -53,18 +56,20 @@ class UserApiModel extends Equatable {
       image: image,
       phone: phone,
       username: username,
+      email: email,
       password: password,
     );
   }
 
   @override
   List<Object?> get props => [
-        userId,
-        firstName,
-        lastName,
-        image,
-        phone,
-        username,
-        password,
-      ];
+    userId,
+    firstName,
+    lastName,
+    image,
+    phone,
+    username,
+    email,
+    password,
+  ];
 }

@@ -13,7 +13,10 @@ class RegisterView extends StatefulWidget {
 
 class _RegisterViewState extends State<RegisterView> {
   final emailController = TextEditingController();
-  final nameController = TextEditingController();
+  final usernameController = TextEditingController();
+  final nameController = TextEditingController(); // First name
+  final lastNameController = TextEditingController(); // Last name
+  final phoneController = TextEditingController(); // Phone (optional)
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
@@ -213,16 +216,16 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Name
+                    // Username
                     const Text(
-                      "Name",
+                      "Username",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 6),
                     TextFormField(
-                      controller: nameController,
+                      controller: usernameController,
                       decoration: InputDecoration(
-                        hintText: "Enter your name",
+                        hintText: "Enter your username",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -232,9 +235,80 @@ class _RegisterViewState extends State<RegisterView> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty)
-                          return 'Please enter your name';
+                          return 'Please enter a username';
                         return null;
                       },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // First Name
+                    const Text(
+                      "First Name",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        hintText: "Enter your first name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Please enter your first name';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Last Name
+                    const Text(
+                      "Last Name",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    TextFormField(
+                      controller: lastNameController,
+                      decoration: InputDecoration(
+                        hintText: "Enter your last name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty)
+                          return 'Please enter your last name';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Phone (Optional)
+                    const Text(
+                      "Phone (optional)",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 6),
+                    TextFormField(
+                      controller: phoneController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        hintText: "Enter your phone number",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16),
 
@@ -307,14 +381,17 @@ class _RegisterViewState extends State<RegisterView> {
                                     context.read<RegisterViewModel>().add(
                                       RegisterUserEvent(
                                         context: context,
-                                        username: emailController.text.trim(),
+                                        username:
+                                            usernameController.text.trim(),
+                                        email: emailController.text.trim(),
                                         firstName: nameController.text.trim(),
                                         lastName:
-                                            '', // add if you have last name field
-                                        phone:
-                                            '', // add if you have phone field
+                                            lastNameController.text.trim(),
+                                        phone: phoneController.text.trim(),
                                         password:
                                             passwordController.text.trim(),
+                                        image:
+                                            null, // You can handle this later
                                       ),
                                     );
                                   }

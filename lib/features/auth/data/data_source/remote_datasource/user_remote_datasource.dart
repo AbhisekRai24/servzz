@@ -6,18 +6,17 @@ import 'package:servzz/features/auth/data/data_source/user_data_source.dart';
 import 'package:servzz/features/auth/data/model/user_api_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 
-
 class UserRemoteDataSource implements IUserDatasource {
   final ApiService _apiService;
   UserRemoteDataSource({required ApiService apiService})
     : _apiService = apiService;
 
   @override
-  Future<String> loginUser(String username, String password) async {
+  Future<String> loginUser(String email, String password) async {
     try {
       final response = await _apiService.dio.post(
         ApiEndpoints.login,
-        data: {'username': username, 'password': password},
+        data: {'email': email, 'password': password},
       );
       if (response.statusCode == 200) {
         final str = response.data['token'];
@@ -55,9 +54,9 @@ class UserRemoteDataSource implements IUserDatasource {
   }
 
   @override
-Future<String> uploadProfilePicture(File file) {
-  throw UnimplementedError('Upload profile picture API not implemented yet');
-}
+  Future<String> uploadProfilePicture(File file) {
+    throw UnimplementedError('Upload profile picture API not implemented yet');
+  }
 
   @override
   Future<UserEntity> getCurrentUser() {

@@ -133,7 +133,7 @@ class _LoginViewState extends State<LoginView> {
                               context.read<LoginViewModel>().add(
                                 LoginWithEmailAndPasswordEvent(
                                   context: context,
-                                  username: emailController.text,
+                                  email: emailController.text,
                                   password: passwordController.text,
                                 ),
                               );

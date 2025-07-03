@@ -16,9 +16,10 @@ class RegisterUserEvent extends RegisterEvent {
   final BuildContext context;
   final String firstName;
   final String lastName;
-  final String phone;
+  final String? phone; 
   
   final String username;
+  final String email;
   final String password;
   final String? image;
 
@@ -26,9 +27,10 @@ class RegisterUserEvent extends RegisterEvent {
     required this.context,
     required this.firstName,
     required this.lastName,
-    required this.phone,
+    this.phone,
 
     required this.username,
+    required this.email,
     required this.password,
     this.image,
   });

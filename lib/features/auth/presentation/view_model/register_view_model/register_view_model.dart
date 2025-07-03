@@ -42,6 +42,7 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
         firstname: event.firstName,
         lastname: event.lastName,
         phone: event.phone,
+        email: event.email,
 
         username: event.username,
         password: event.password,

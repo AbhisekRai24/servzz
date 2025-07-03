@@ -8,18 +8,20 @@ import 'package:servzz/features/auth/domain/repository/user_repository.dart';
 class RegisterUserParams extends Equatable {
   final String firstname;
   final String lastname;
-  final String phone;
+  final String? phone;
 
   final String username;
+  final String email;
   final String password;
   final String? image;
 
   const RegisterUserParams({
     required this.firstname,
     required this.lastname,
-    required this.phone,
+    this.phone,
 
     required this.username,
+    required this.email,
     required this.password,
     this.image,
   });
@@ -28,15 +30,17 @@ class RegisterUserParams extends Equatable {
   const RegisterUserParams.initial({
     required this.firstname,
     required this.lastname,
-    required this.phone,
+    this.phone,
 
     required this.username,
+    required this.email,
+
     required this.password,
     this.image,
   });
 
   @override
-  List<Object?> get props => [firstname, lastname, phone, username, password];
+  List<Object?> get props => [firstname, lastname, phone, username, email, password ];
 }
 
 class UserRegisterUsecase
@@ -54,6 +58,7 @@ class UserRegisterUsecase
       phone: params.phone,
 
       username: params.username,
+      email: params.email,
       password: params.password,
       image: params.image,
     );
