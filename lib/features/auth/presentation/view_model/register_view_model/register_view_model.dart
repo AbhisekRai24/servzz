@@ -16,22 +16,22 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     : super(RegisterState.initial()) {
     on<RegisterUserEvent>(_onRegisterUser);
     on<UploadImageEvent>(_onLoadImage);
-    on<LoadCoursesAndBatchesEvent>(_onLoadCoursesAndBatches);
+    // on<LoadCoursesAndBatchesEvent>(_onLoadCoursesAndBatches);
 
-    add(LoadCoursesAndBatchesEvent());
+    // add(LoadCoursesAndBatchesEvent());
   }
 
-  void _onLoadCoursesAndBatches(
-    LoadCoursesAndBatchesEvent event,
-    Emitter<RegisterState> emit,
-  ) {
-    emit(state.copyWith(isLoading: true));
-    // _batchViewModel.add(LoadBatchesEvent());
-    // _courseViewModel.add(LoadCourseEvent());
-    emit(state.copyWith(isLoading: false, isSuccess: true));
-  }
+  // void _onLoadCoursesAndBatches(
+  //   LoadCoursesAndBatchesEvent event,
+  //   Emitter<RegisterState> emit,
+  // ) {
+  //   emit(state.copyWith(isLoading: true));
+  //   // _batchViewModel.add(LoadBatchesEvent());
+  //   // _courseViewModel.add(LoadCourseEvent());
+  //   emit(state.copyWith(isLoading: false, isSuccess: true));
+  // }
 
-  Future<void> _onRegisterUser(
+   Future<void> _onRegisterUser(
     RegisterUserEvent event,
     Emitter<RegisterState> emit,
   ) async {
@@ -42,7 +42,7 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
         firstname: event.firstName,
         lastname: event.lastName,
         phone: event.phone,
-
+        email: event.email,
         username: event.username,
         password: event.password,
         image: state.imageName,
@@ -50,20 +50,11 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     );
 
     result.fold(
-      (l) {
+      (failure) {
         emit(state.copyWith(isLoading: false, isSuccess: false));
-        showMySnackBar(
-          context: event.context,
-          message: l.message,
-          color: Colors.red,
-        );
       },
       (r) {
         emit(state.copyWith(isLoading: false, isSuccess: true));
-        showMySnackBar(
-          context: event.context,
-          message: "Registration Successful",
-        );
       },
     );
   }
@@ -75,10 +66,9 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
     );
 
     result.fold(
-      (l) => emit(state.copyWith(isLoading: false, isSuccess: false)),
-      (r) {
-        emit(state.copyWith(isLoading: false, isSuccess: true, imageName: r));
-      },
+      (failure) => emit(state.copyWith(isLoading: false, isSuccess: false)),
+      (imageName) => emit(
+          state.copyWith(isLoading: false, isSuccess: true, imageName: imageName)),
     );
   }
 }

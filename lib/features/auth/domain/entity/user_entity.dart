@@ -7,8 +7,9 @@ class UserEntity extends Equatable {
   final String firstName;
   final String lastName;
   final String? image;
-  final String phone;
+  final String? phone;
   final String username;
+  final String email;
   final String password;
 
   const UserEntity({
@@ -16,8 +17,9 @@ class UserEntity extends Equatable {
     required this.firstName,
     required this.lastName,
     this.image,
-    required this.phone,
+    this.phone,
     required this.username,
+    required this.email,
     required this.password,
   });
 

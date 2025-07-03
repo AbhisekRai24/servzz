@@ -64,7 +64,7 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
   ) async {
     emit(state.copyWith(isLoading: true));
     final result = await _studentLoginUsecase(
-      LoginParams(username: event.username, password: event.password),
+      LoginParams(email: event.email, password: event.password),
     );
 
     result.fold(

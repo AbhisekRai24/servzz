@@ -1,34 +1,23 @@
 import 'package:equatable/equatable.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:servzz/app/constant/hive_table_constant.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 
-import 'package:uuid/uuid.dart';
+part 'user_api_model.g.dart';
 
-// dart run build_runner build -d
-part 'user_hive_model.g.dart';
-
-@HiveType(typeId: HiveTableConstant.userTableId)
-class UserHiveModel extends Equatable {
-  @HiveField(0)
+@JsonSerializable()
+class UserApiModel extends Equatable {
+  @JsonKey(name: '_id')
   final String? userId;
-  @HiveField(1)
   final String firstName;
-  @HiveField(2)
   final String lastName;
-  @HiveField(3)
   final String? image;
-  @HiveField(4)
   final String? phone;
-  @HiveField(5)
   final String username;
-  @HiveField(6) 
   final String email;
-  @HiveField(8)
   final String password;
 
-  UserHiveModel({
-    String? userId,
+  const UserApiModel({
+    this.userId,
     required this.firstName,
     required this.lastName,
     this.image,
@@ -36,22 +25,17 @@ class UserHiveModel extends Equatable {
     required this.username,
     required this.email,
     required this.password,
-  }) : userId = userId ?? const Uuid().v4();
+  });
 
-  // Initial Constructor
-  const UserHiveModel.initial()
-    : userId = '',
-      firstName = '',
-      lastName = '',
-      image = '',
-      phone = '',
-      username = '',
-      email = '',
-      password = '';
+  // JSON serialization
+  factory UserApiModel.fromJson(Map<String, dynamic> json) =>
+      _$UserApiModelFromJson(json);
 
-  // From Entity
-  factory UserHiveModel.fromEntity(UserEntity entity) {
-    return UserHiveModel(
+  Map<String, dynamic> toJson() => _$UserApiModelToJson(this);
+
+  // Convert from Entity
+  factory UserApiModel.fromEntity(UserEntity entity) {
+    return UserApiModel(
       userId: entity.userId,
       firstName: entity.firstName,
       lastName: entity.lastName,
@@ -63,7 +47,7 @@ class UserHiveModel extends Equatable {
     );
   }
 
-  // To Entity
+  // Convert to Entity
   UserEntity toEntity() {
     return UserEntity(
       userId: userId,
@@ -83,6 +67,7 @@ class UserHiveModel extends Equatable {
     firstName,
     lastName,
     image,
+    phone,
     username,
     email,
     password,
