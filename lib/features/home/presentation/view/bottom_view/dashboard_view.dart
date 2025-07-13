@@ -174,7 +174,7 @@ class DashboardView extends StatelessWidget {
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: AssetImage(
-                              "assets/image/food_sample.jpg",
+                              "assets/image/food_banner.jpg",
                             ), // Use your own image path
                             radius: 25,
                           ),

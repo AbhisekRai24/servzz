@@ -13,14 +13,20 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // main theme of the app
-      // theme as in the customizable themes in androids
-      theme: getApplicationTheme(),
-      debugShowCheckedModeBanner: false,
-      home: BlocProvider.value(
-        value: serviceLocator<SplashViewModel>(),
-        child: SplashView(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SplashViewModel>(
+          create: (_) => serviceLocator<SplashViewModel>(),
+        ),
+        BlocProvider<LoginViewModel>(
+          create: (_) => serviceLocator<LoginViewModel>(),
+        ),
+        // Add RegisterViewModel here if needed
+      ],
+      child: MaterialApp(
+        theme: getApplicationTheme(),
+        debugShowCheckedModeBanner: false,
+        home: SplashView(),
       ),
     );
   }
