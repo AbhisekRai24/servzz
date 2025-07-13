@@ -42,5 +42,21 @@ void main() {
     expect(find.text("Login"), findsOneWidget);
     expect(find.text("Don't have an account? Register"), findsOneWidget);
   });
+  
+  testWidgets('shows snackbar on login failure', (tester) async {
+    when(() => mockUserLoginUsecase(any()))
+        .thenAnswer((_) async => const Left(RemoteDatabaseFailure(message: "Login failed")));
 
+    await tester.pumpWidget(buildLoginScreen());
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'wrong@email.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'wrongpassword');
+    await tester.tap(find.text('Login'));
+
+    await tester.pumpAndSettle(); // Wait for animations and snackbar
+
+    expect(find.text('Invalid credentials. Please try again.'), findsOneWidget);
+  });
+
+  
 }
