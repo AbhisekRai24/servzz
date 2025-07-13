@@ -63,6 +63,17 @@ void main() {
       when(
         () => mockUserRepository.loginUser(any(), any()),
       ).thenAnswer((_) async => const Left(failure));
+       // act
+      final result = await usecase(tParams);
+
+      // assert
+      expect(result, const Left(failure));
+      verify(() => mockUserRepository.loginUser(tEmail, tPassword)).called(1);
+      verifyNever(() => mockTokenSharedPrefs.saveToken(any()));
+      verifyNoMoreInteractions(mockUserRepository);
+      verifyNoMoreInteractions(mockTokenSharedPrefs);
+    },
+  );
 
      
 }
