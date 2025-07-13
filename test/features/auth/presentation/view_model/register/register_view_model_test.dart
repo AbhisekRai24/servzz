@@ -75,3 +75,38 @@ void main() {
             ),
           ],
     );
+    
+    blocTest<RegisterViewModel, RegisterState>(
+      'emits [loading, success] when registration succeeds',
+      build: () {
+        when(
+          () => mockUserRegisterUsecase.call(any()),
+        ).thenAnswer((_) async => const Right('Registered'));
+        return RegisterViewModel(
+          mockUserRegisterUsecase,
+          mockUploadImageUsecase,
+        );
+      },
+      act:
+          (bloc) => bloc.add(
+            RegisterUserEvent(
+              context: MockBuildContext(),
+              firstName: 'John',
+              lastName: 'Doe',
+              phone: '9800000000',
+              username: 'johndoe',
+              email: 'john@example.com',
+              password: '12345678',
+              image: null,
+            ),
+          ),
+      expect:
+          () => [
+            const RegisterState(isLoading: true, isSuccess: false),
+            const RegisterState(isLoading: false, isSuccess: true),
+          ],
+    );
+
+    
+}
+
