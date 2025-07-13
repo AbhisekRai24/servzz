@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:servzz/features/auth/presentation/view/login_view.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_event.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_state.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
@@ -47,6 +48,9 @@ class _RegisterViewState extends State<RegisterView> {
           if (state.isSuccess && !state.isLoading) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Registration Successful')),
+            );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const LoginView()),
             );
             // Optionally clear the form or navigate away here
           } else if (!state.isSuccess && !state.isLoading) {
