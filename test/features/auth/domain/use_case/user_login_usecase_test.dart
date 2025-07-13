@@ -6,7 +6,6 @@ import 'package:servzz/core/error/failure.dart';
 import 'package:servzz/features/auth/domain/repository/user_repository.dart';
 import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
 
-
 // Mocks for required class files
 class MockUserRepository extends Mock implements IUserRepository {}
 
@@ -33,47 +32,47 @@ void main() {
     registerFallbackValue(const LoginParams(email: '', password: ''));
   });
 
-  test('Save token when login is successful', () async {
-    // arrange
-    when(
-      () => mockUserRepository.loginUser(any(), any()),
-    ).thenAnswer((_) async => const Right(tToken));
-
-    // Mock saveToken to return Right(null) wrapped in Future
-    when(
-      () => mockTokenSharedPrefs.saveToken(any()),
-    ).thenAnswer((_) async => const Right(null));
-
-    // act
-    final result = await usecase(tParams);
-
-    // assert
-    expect(result, const Right(tToken));
-    verify(() => mockUserRepository.loginUser(tEmail, tPassword)).called(1);
-    verify(() => mockTokenSharedPrefs.saveToken(tToken)).called(1);
-    verifyNoMoreInteractions(mockUserRepository);
-    verifyNoMoreInteractions(mockTokenSharedPrefs);
-  });
-
-  test(
-    'Should return Failure when repository fails and should not save token',
-    () async {
+  group('Two UserLoginUsecase Tests ', () {
+    test('Save token when login is successful', () async {
       // arrange
-      const failure = RemoteDatabaseFailure(message: 'Login failed');
       when(
         () => mockUserRepository.loginUser(any(), any()),
-      ).thenAnswer((_) async => const Left(failure));
-       // act
+      ).thenAnswer((_) async => const Right(tToken));
+
+      when(
+        () => mockTokenSharedPrefs.saveToken(any()),
+      ).thenAnswer((_) async => const Right(null));
+
+      // act
       final result = await usecase(tParams);
 
       // assert
-      expect(result, const Left(failure));
+      expect(result, const Right(tToken));
       verify(() => mockUserRepository.loginUser(tEmail, tPassword)).called(1);
-      verifyNever(() => mockTokenSharedPrefs.saveToken(any()));
+      verify(() => mockTokenSharedPrefs.saveToken(tToken)).called(1);
       verifyNoMoreInteractions(mockUserRepository);
       verifyNoMoreInteractions(mockTokenSharedPrefs);
-    },
-  );
+    });
 
-     
+    test(
+      'Should return Failure when repository fails and should not save token',
+      () async {
+        // arrange
+        const failure = RemoteDatabaseFailure(message: 'Login failed');
+        when(
+          () => mockUserRepository.loginUser(any(), any()),
+        ).thenAnswer((_) async => const Left(failure));
+
+        // act
+        final result = await usecase(tParams);
+
+        // assert
+        expect(result, const Left(failure));
+        verify(() => mockUserRepository.loginUser(tEmail, tPassword)).called(1);
+        verifyNever(() => mockTokenSharedPrefs.saveToken(any()));
+        verifyNoMoreInteractions(mockUserRepository);
+        verifyNoMoreInteractions(mockTokenSharedPrefs);
+      },
+    );
+  });
 }
