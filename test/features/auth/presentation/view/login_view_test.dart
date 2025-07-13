@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +12,7 @@ import 'package:servzz/core/error/failure.dart';
 
 // Mocks
 class MockUserLoginUsecase extends Mock implements UserLoginUsecase {}
+
 class FakeLoginParams extends Fake implements LoginParams {}
 
 void main() {
@@ -35,17 +35,21 @@ void main() {
     );
   }
 
-  testWidgets('renders LoginView with email, password fields and login button', (tester) async {
-    await tester.pumpWidget(buildLoginScreen());
+  testWidgets(
+    'renders LoginView with email, password fields and login button',
+    (tester) async {
+      await tester.pumpWidget(buildLoginScreen());
 
-    expect(find.byType(TextFormField), findsNWidgets(2));
-    expect(find.text("Login"), findsOneWidget);
-    expect(find.text("Don't have an account? Register"), findsOneWidget);
-  });
-  
+      expect(find.byType(TextFormField), findsNWidgets(2));
+      expect(find.text("Login"), findsOneWidget);
+      expect(find.text("Don't have an account? Register"), findsOneWidget);
+    },
+  );
+
   testWidgets('shows snackbar on login failure', (tester) async {
-    when(() => mockUserLoginUsecase(any()))
-        .thenAnswer((_) async => const Left(RemoteDatabaseFailure(message: "Login failed")));
+    when(() => mockUserLoginUsecase(any())).thenAnswer(
+      (_) async => const Left(RemoteDatabaseFailure(message: "Login failed")),
+    );
 
     await tester.pumpWidget(buildLoginScreen());
 
@@ -57,6 +61,19 @@ void main() {
 
     expect(find.text('Invalid credentials. Please try again.'), findsOneWidget);
   });
+  // testWidgets('navigates to HomeView on successful login', (tester) async {
+  //   when(() => mockUserLoginUsecase(any()))
+  //       .thenAnswer((_) async => const Right("mock_token"));
 
-  
+  //   await tester.pumpWidget(buildLoginScreen());
+
+  //   await tester.enterText(find.byType(TextFormField).at(0), 'test@email.com');
+  //   await tester.enterText(find.byType(TextFormField).at(1), 'correctpassword');
+  //   await tester.tap(find.text('Login'));
+
+  //   await tester.pumpAndSettle();
+
+  //   // Check for some widget or behavior from HomeView
+  //   expect(find.byType(Scaffold), findsWidgets); // You can add more accurate checks
+  // });
 }
