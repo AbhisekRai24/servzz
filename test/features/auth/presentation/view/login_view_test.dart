@@ -35,45 +35,54 @@ void main() {
     );
   }
 
-  testWidgets(
-    'renders LoginView with email, password fields and login button',
-    (tester) async {
-      await tester.pumpWidget(buildLoginScreen());
+  group('LoginView Widget Tests Sprint 5', () {
+    testWidgets(
+      'renders LoginView with email, password fields and login button',
+      (tester) async {
+        await tester.pumpWidget(buildLoginScreen());
 
-      expect(find.byType(TextFormField), findsNWidgets(2));
-      expect(find.text("Login"), findsOneWidget);
-      expect(find.text("Don't have an account? Register"), findsOneWidget);
-    },
-  );
-
-  testWidgets('shows snackbar on login failure', (tester) async {
-    when(() => mockUserLoginUsecase(any())).thenAnswer(
-      (_) async => const Left(RemoteDatabaseFailure(message: "Login failed")),
+        expect(find.byType(TextFormField), findsNWidgets(2));
+        expect(find.text("Login"), findsOneWidget);
+        expect(find.text("Don't have an account? Register"), findsOneWidget);
+      },
     );
 
-    await tester.pumpWidget(buildLoginScreen());
+    testWidgets('shows snackbar on login failure', (tester) async {
+      when(() => mockUserLoginUsecase(any())).thenAnswer(
+        (_) async => const Left(RemoteDatabaseFailure(message: "Login failed")),
+      );
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'wrong@email.com');
-    await tester.enterText(find.byType(TextFormField).at(1), 'wrongpassword');
-    await tester.tap(find.text('Login'));
+      await tester.pumpWidget(buildLoginScreen());
 
-    await tester.pumpAndSettle(); // Wait for animations and snackbar
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        'wrong@email.com',
+      );
+      await tester.enterText(find.byType(TextFormField).at(1), 'wrongpassword');
+      await tester.tap(find.text('Login'));
 
-    expect(find.text('Invalid credentials. Please try again.'), findsOneWidget);
+      await tester.pumpAndSettle(); // Wait for animations and snackbar
+
+      expect(
+        find.text('Invalid credentials. Please try again.'),
+        findsOneWidget,
+      );
+    });
+
+    // Uncomment when you have a proper mock/navigation setup for HomeView
+    // testWidgets('navigates to HomeView on successful login', (tester) async {
+    //   when(() => mockUserLoginUsecase(any()))
+    //       .thenAnswer((_) async => const Right("mock_token"));
+
+    //   await tester.pumpWidget(buildLoginScreen());
+
+    //   await tester.enterText(find.byType(TextFormField).at(0), 'test@email.com');
+    //   await tester.enterText(find.byType(TextFormField).at(1), 'correctpassword');
+    //   await tester.tap(find.text('Login'));
+
+    //   await tester.pumpAndSettle();
+
+    //   expect(find.byType(Scaffold), findsWidgets);
+    // });
   });
-  // testWidgets('navigates to HomeView on successful login', (tester) async {
-  //   when(() => mockUserLoginUsecase(any()))
-  //       .thenAnswer((_) async => const Right("mock_token"));
-
-  //   await tester.pumpWidget(buildLoginScreen());
-
-  //   await tester.enterText(find.byType(TextFormField).at(0), 'test@email.com');
-  //   await tester.enterText(find.byType(TextFormField).at(1), 'correctpassword');
-  //   await tester.tap(find.text('Login'));
-
-  //   await tester.pumpAndSettle();
-
-  //   // Check for some widget or behavior from HomeView
-  //   expect(find.byType(Scaffold), findsWidgets); // You can add more accurate checks
-  // });
 }
