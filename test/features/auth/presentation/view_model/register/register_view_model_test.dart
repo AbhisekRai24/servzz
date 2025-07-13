@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
@@ -75,7 +73,7 @@ void main() {
             ),
           ],
     );
-    
+
     blocTest<RegisterViewModel, RegisterState>(
       'emits [loading, success] when registration succeeds',
       build: () {
@@ -106,7 +104,35 @@ void main() {
             const RegisterState(isLoading: false, isSuccess: true),
           ],
     );
-
-    
+    blocTest<RegisterViewModel, RegisterState>(
+      'emits [loading, failure] when registration fails',
+      build: () {
+        when(() => mockUserRegisterUsecase.call(any())).thenAnswer(
+          (_) async => Left(RemoteDatabaseFailure(message: 'Error')),
+        );
+        return RegisterViewModel(
+          mockUserRegisterUsecase,
+          mockUploadImageUsecase,
+        );
+      },
+      act:
+          (bloc) => bloc.add(
+            RegisterUserEvent(
+              context: MockBuildContext(),
+              firstName: 'Jon',
+              lastName: 'Jones',
+              phone: '9818098313',
+              username: 'jonbones',
+              email: 'jon@gmail.com',
+              password: 'password',
+              image: null,
+            ),
+          ),
+      expect:
+          () => [
+            const RegisterState(isLoading: true, isSuccess: false),
+            const RegisterState(isLoading: false, isSuccess: false),
+          ],
+    );
+  });
 }
-
