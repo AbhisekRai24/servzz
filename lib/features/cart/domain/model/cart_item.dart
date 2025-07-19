@@ -1,5 +1,5 @@
 // lib/features/cart/domain/models/cart_item.dart
-import 'package:servzz/features/cart/domain/addon.dart';
+import 'package:servzz/features/cart/domain/model/addon.dart';
 import 'package:servzz/features/product/domain/entity/product_entity.dart';
 
 class CartItem {
