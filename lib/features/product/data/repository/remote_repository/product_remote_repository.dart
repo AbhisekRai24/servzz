@@ -14,15 +14,17 @@ class ProductRemoteRepository implements IProductRepository {
   @override
   Future<Either<Failure, List<ProductEntity>>> fetchProducts({
     int limit = 10,
+    int page = 1,
+    String? search,
   }) async {
     try {
-      final products = await _productRemoteDataSource.fetchProducts();
+      final products = await _productRemoteDataSource.fetchProducts(
+        limit: limit,
+        page: page,
+        search: search,
+      );
 
-      // Slice the list here according to the 'limit'
-      final slicedProducts =
-          products.length > limit ? products.sublist(0, limit) : products;
-
-      return Right(slicedProducts);
+      return Right(products);
     } catch (e) {
       return Left(RemoteDatabaseFailure(message: e.toString()));
     }

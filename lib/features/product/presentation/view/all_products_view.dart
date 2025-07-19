@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:servzz/app/service_locator/service_locator.dart';
 import 'package:servzz/features/product/domain/entity/product_entity.dart';
+import 'package:servzz/features/product/presentation/view/product_detail.dart';
 import 'package:servzz/features/product/presentation/view_model/product_event.dart';
 import 'package:servzz/features/product/presentation/view_model/product_state.dart';
 import 'package:servzz/features/product/presentation/view_model/product_view_model.dart';
@@ -12,15 +13,66 @@ class AllProductsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductBloc>(
-      create: (context) =>
-          serviceLocator<ProductBloc>()..add(FetchProductsEvent()), // no limit
+      create:
+          (context) =>
+              serviceLocator<ProductBloc>()
+                ..add(FetchProductsEvent()), // no limit
       child: const _AllProductsViewBody(),
     );
   }
 }
 
-class _AllProductsViewBody extends StatelessWidget {
+class _AllProductsViewBody extends StatefulWidget {
   const _AllProductsViewBody({super.key});
+
+  @override
+  State<_AllProductsViewBody> createState() => _AllProductsViewBodyState();
+}
+
+class _AllProductsViewBodyState extends State<_AllProductsViewBody> {
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
+  int _page = 1;
+  final int _limit = 10;
+  String? _search;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
+        // Near bottom, fetch next page
+        _page++;
+        _fetchProducts();
+      }
+    });
+
+    _searchController.addListener(() {
+      final newSearch = _searchController.text.trim();
+      if (newSearch != _search) {
+        _search = newSearch;
+        _page = 1;
+        _fetchProducts();
+      }
+    });
+  }
+
+  void _fetchProducts() {
+    context.read<ProductBloc>().add(
+      FetchProductsEvent(limit: _limit, page: _page, search: _search),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +81,40 @@ class _AllProductsViewBody extends StatelessWidget {
         title: const Text("All Products"),
         backgroundColor: Colors.red.shade400,
         foregroundColor: Colors.white,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search products...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: BlocBuilder<ProductBloc, ProductState>(
           builder: (context, state) {
-            if (state.isLoading) {
+            if (state.isLoading && state.products.isEmpty) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state.error != null) {
+            } else if (state.error != null && state.products.isEmpty) {
               return Center(child: Text("Error: ${state.error}"));
             } else if (state.products.isEmpty) {
               return const Center(child: Text("No products found"));
             }
 
             return GridView.builder(
-              itemCount: state.products.length,
+              controller: _scrollController,
+              itemCount: state.products.length + 1, // +1 for loading indicator
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 12,
@@ -51,6 +122,12 @@ class _AllProductsViewBody extends StatelessWidget {
                 childAspectRatio: 0.75,
               ),
               itemBuilder: (context, index) {
+                if (index == state.products.length) {
+                  // Show loading indicator at bottom
+                  return state.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : const SizedBox.shrink();
+                }
                 final product = state.products[index];
                 return _ProductCard(product: product);
               },
@@ -65,13 +142,18 @@ class _AllProductsViewBody extends StatelessWidget {
 class _ProductCard extends StatelessWidget {
   final ProductEntity product;
 
-  const _ProductCard({required this.product});
+  const _ProductCard({required this.product, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // TODO: Navigate to detail screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailView(product: product),
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
@@ -89,17 +171,31 @@ class _ProductCard extends StatelessWidget {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: product.imageUrl != null
-                    ? Image.network(
-                        product.imageUrl!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
-                        loadingBuilder: (context, child, loadingProgress) =>
-                            loadingProgress == null ? child : const Center(child: CircularProgressIndicator()),
-                      )
-                    : const Icon(Icons.image_not_supported, size: 60, color: Colors.grey),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+                child:
+                    product.imageUrl != null
+                        ? Image.network(
+                          product.imageUrl!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder:
+                              (context, error, stackTrace) =>
+                                  const Icon(Icons.broken_image),
+                          loadingBuilder:
+                              (context, child, loadingProgress) =>
+                                  loadingProgress == null
+                                      ? child
+                                      : const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                        )
+                        : const Icon(
+                          Icons.image_not_supported,
+                          size: 60,
+                          color: Colors.grey,
+                        ),
               ),
             ),
             Padding(
@@ -114,7 +210,10 @@ class _ProductCard extends StatelessWidget {
                   ),
                   Text(
                     'Rs ${product.price}',
-                    style: TextStyle(color: Colors.red[400], fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: Colors.red[400],
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

@@ -1,12 +1,25 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:servzz/app/constant/api_endpoints.dart';
 import 'package:servzz/features/category/data/model/category_api_model.dart';
+import 'package:servzz/features/product/data/model/add_on_api_model.dart';
 import 'package:servzz/features/product/domain/entity/product_entity.dart';
-// import your new category model
+
+import 'package:logging/logging.dart';
 
 // dart run build_runner build -d
 part 'product_api_model.g.dart';
+
+final _logger = Logger('ProductRemoteDataSource');
+
+void setupLogging() {
+  Logger.root.level = Level.ALL; // capture all logs
+  Logger.root.onRecord.listen((record) {
+    // You can customize output here (e.g., write to file, etc.)
+    debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+  });
+}
 
 @JsonSerializable()
 class ProductApiModel extends Equatable {
@@ -21,7 +34,11 @@ class ProductApiModel extends Equatable {
 
   final double price;
 
-  final CategoryApiModel? category; // updated here
+  final CategoryApiModel? category;
+
+  final String? sellerId; // new
+
+  final List<AddonApiModel> addons; // new
 
   const ProductApiModel({
     this.productId,
@@ -30,22 +47,44 @@ class ProductApiModel extends Equatable {
     this.imageUrl,
     required this.price,
     this.category,
+    this.sellerId,
+    this.addons = const [], // default empty array
   });
 
   factory ProductApiModel.fromJson(Map<String, dynamic> json) {
+    _logger.info('DEBUG: Raw Product JSON: $json');
+
+    // Handle image
     final imageData = json['productImage'];
     String? imageUrl;
-
     if (imageData is String) {
       imageUrl = imageData;
     } else if (imageData is Map<String, dynamic>) {
       imageUrl = imageData['url'] as String?;
     }
 
-    // parse category as nested object or null
+    // Handle category
     CategoryApiModel? category;
     if (json['categoryId'] is Map<String, dynamic>) {
       category = CategoryApiModel.fromJson(json['categoryId']);
+    }
+
+    // Handle sellerId (string or map)
+    String? sellerId;
+    final seller = json['sellerId'];
+    if (seller is String) {
+      sellerId = seller;
+    } else if (seller is Map<String, dynamic>) {
+      sellerId = seller['_id'] as String?;
+    }
+
+    // Handle addons
+    List<AddonApiModel> addons = [];
+    if (json['addons'] is List) {
+      addons =
+          (json['addons'] as List)
+              .map((e) => AddonApiModel.fromJson(e as Map<String, dynamic>))
+              .toList();
     }
 
     return ProductApiModel(
@@ -55,11 +94,11 @@ class ProductApiModel extends Equatable {
       imageUrl: imageUrl,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       category: category,
+      sellerId: sellerId,
+      addons: addons,
     );
   }
-
   factory ProductApiModel.fromEntity(ProductEntity entity) {
-    // You need to update ProductEntity to include CategoryEntity for full mapping.
     return ProductApiModel(
       productId: entity.productId,
       name: entity.name,
@@ -73,13 +112,20 @@ class ProductApiModel extends Equatable {
                 name: entity.category!.name,
               )
               : null,
+      sellerId: entity.sellerId,
+      addons:
+          entity.addons
+              ?.map(
+                (addon) => AddonApiModel(name: addon.name, price: addon.price),
+              )
+              .toList() ??
+          [],
     );
   }
 
   ProductEntity toEntity() {
     var normalizedImagePath = imageUrl?.replaceAll("\\", "/") ?? '';
 
-    // Remove "/api" prefix if present
     if (normalizedImagePath.startsWith('/api/')) {
       normalizedImagePath = normalizedImagePath.replaceFirst('/api', '');
     }
@@ -104,6 +150,8 @@ class ProductApiModel extends Equatable {
       imageUrl: fullImageUrl,
       price: price,
       category: category?.toEntity(),
+      sellerId: sellerId,
+      addons: addons.map((a) => a.toEntity()).toList(),
     );
   }
 
@@ -115,5 +163,7 @@ class ProductApiModel extends Equatable {
     imageUrl,
     price,
     category,
+    sellerId,
+    addons,
   ];
 }

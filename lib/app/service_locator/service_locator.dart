@@ -14,6 +14,7 @@ import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
+import 'package:servzz/features/cart/presentation/view_model/car_view_model.dart';
 
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
 import 'package:servzz/features/product/data/data_source/product_remote_data_source.dart';
@@ -37,6 +38,8 @@ Future<void> initDependencies() async {
   await _initHomeModule();
   await _initSplashModule();
   await _initProductModule();
+
+  await _initCartModule();
 }
 
 Future<void> _initSharedPrefs() async {
@@ -194,4 +197,13 @@ Future<void> _initHomeModule() async {
 
 Future<void> _initSplashModule() async {
   serviceLocator.registerFactory(() => SplashViewModel());
+}
+
+Future<void> _initCartModule() async {
+  // Register CartViewModel (Bloc)
+  serviceLocator.registerFactory<CartViewModel>(() => CartViewModel());
+
+  // If you have Cart-related use cases or repositories, register them here as well
+  // e.g. serviceLocator.registerFactory<CartRepository>(() => CartRepositoryImpl());
+  // Then inject those into CartViewModel's constructor
 }
