@@ -14,13 +14,20 @@ import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
+import 'package:servzz/features/home/data/data_source/product_remote_data_source.dart';
+import 'package:servzz/features/home/data/repository/remote_repository/product_remote_repository.dart';
+import 'package:servzz/features/home/domain/repository/product_repository.dart';
+import 'package:servzz/features/home/domain/use_case/product_fetch_usecase.dart';
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
+import 'package:servzz/features/home/presentation/view_model/product_view_model.dart';
 import 'package:servzz/features/splash/presentation/view_model/splash_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
+  serviceLocator.registerLazySingleton<http.Client>(() => http.Client());
   await _initHiveService();
   await _initApiService();
   // await initApiModule();
@@ -28,6 +35,7 @@ Future<void> initDependencies() async {
   await _initAuthModule();
   await _initHomeModule();
   await _initSplashModule();
+  await _initProductModule();
 }
 
 Future<void> _initSharedPrefs() async {
@@ -54,6 +62,31 @@ Future<void> _initHiveService() async {
 //   serviceLocator.registerLazySingleton<Dio>(() => Dio());
 //   serviceLocator.registerLazySingleton(() => ApiService(serviceLocator<Dio>()));
 // }
+Future<void> _initProductModule() async {
+  // Remote Data Source
+  serviceLocator.registerFactory<ProductRemoteDataSource>(
+    () => ProductRemoteDataSourceImpl(client: serviceLocator<http.Client>()),
+  );
+
+  // Repository
+  serviceLocator.registerFactory<IProductRepository>(
+    () => ProductRemoteRepository(
+      productRemoteDataSource: serviceLocator<ProductRemoteDataSource>(),
+    ),
+  );
+
+  // Usecase
+  serviceLocator.registerFactory(
+    () => FetchProductsUsecase(
+      productRepository: serviceLocator<IProductRepository>(),
+    ),
+  );
+
+  // Bloc
+  serviceLocator.registerFactory(
+    () => ProductBloc(serviceLocator<FetchProductsUsecase>()),
+  );
+}
 
 Future<void> _initAuthModule() async {
   // Data
@@ -153,7 +186,7 @@ Future<void> _initHomeModule() async {
   serviceLocator.registerFactory(
     () => HomeViewModel(
       loginViewModel: serviceLocator<LoginViewModel>(),
-      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(), 
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 }
