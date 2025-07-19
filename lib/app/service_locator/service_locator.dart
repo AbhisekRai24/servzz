@@ -14,12 +14,13 @@ import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
-import 'package:servzz/features/home/data/data_source/product_remote_data_source.dart';
-import 'package:servzz/features/home/data/repository/remote_repository/product_remote_repository.dart';
-import 'package:servzz/features/home/domain/repository/product_repository.dart';
-import 'package:servzz/features/home/domain/use_case/product_fetch_usecase.dart';
+
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
-import 'package:servzz/features/home/presentation/view_model/product_view_model.dart';
+import 'package:servzz/features/product/data/data_source/product_remote_data_source.dart';
+import 'package:servzz/features/product/data/repository/remote_repository/product_remote_repository.dart';
+import 'package:servzz/features/product/domain/repository/product_repository.dart';
+import 'package:servzz/features/product/domain/use_case/product_fetch_usecase.dart';
+import 'package:servzz/features/product/presentation/view_model/product_view_model.dart';
 import 'package:servzz/features/splash/presentation/view_model/splash_view_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;

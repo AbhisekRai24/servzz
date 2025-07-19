@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:servzz/app/constant/api_endpoints.dart';
+import 'package:servzz/features/category/data/model/category_api_model.dart';
 import 'package:servzz/features/product/domain/entity/product_entity.dart';
+// import your new category model
 
 // dart run build_runner build -d
 part 'product_api_model.g.dart';
@@ -18,7 +20,8 @@ class ProductApiModel extends Equatable {
   final String? imageUrl;
 
   final double price;
-  final String? categoryId;
+
+  final CategoryApiModel? category; // updated here
 
   const ProductApiModel({
     this.productId,
@@ -26,31 +29,68 @@ class ProductApiModel extends Equatable {
     this.description,
     this.imageUrl,
     required this.price,
-    this.categoryId,
+    this.category,
   });
 
-  factory ProductApiModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductApiModelFromJson(json);
+  factory ProductApiModel.fromJson(Map<String, dynamic> json) {
+    final imageData = json['productImage'];
+    String? imageUrl;
 
-  Map<String, dynamic> toJson() => _$ProductApiModelToJson(this);
+    if (imageData is String) {
+      imageUrl = imageData;
+    } else if (imageData is Map<String, dynamic>) {
+      imageUrl = imageData['url'] as String?;
+    }
+
+    // parse category as nested object or null
+    CategoryApiModel? category;
+    if (json['categoryId'] is Map<String, dynamic>) {
+      category = CategoryApiModel.fromJson(json['categoryId']);
+    }
+
+    return ProductApiModel(
+      productId: json['_id'] as String?,
+      name: json['name'] ?? '',
+      description: json['description'] as String?,
+      imageUrl: imageUrl,
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      category: category,
+    );
+  }
 
   factory ProductApiModel.fromEntity(ProductEntity entity) {
+    // You need to update ProductEntity to include CategoryEntity for full mapping.
     return ProductApiModel(
       productId: entity.productId,
       name: entity.name,
       description: entity.description,
       imageUrl: entity.imageUrl,
       price: entity.price,
-      categoryId: entity.categoryId,
+      category:
+          entity.category != null
+              ? CategoryApiModel(
+                categoryId: entity.category!.categoryId,
+                name: entity.category!.name,
+              )
+              : null,
     );
   }
 
   ProductEntity toEntity() {
-    final normalizedImagePath = imageUrl?.replaceAll("\\", "/") ?? '';
+    var normalizedImagePath = imageUrl?.replaceAll("\\", "/") ?? '';
+
+    // Remove "/api" prefix if present
+    if (normalizedImagePath.startsWith('/api/')) {
+      normalizedImagePath = normalizedImagePath.replaceFirst('/api', '');
+    }
+
     final cleanedBaseUrl =
-        ApiEndpoints.baseUrl.endsWith('/')
-            ? ApiEndpoints.baseUrl.substring(0, ApiEndpoints.baseUrl.length - 1)
-            : ApiEndpoints.baseUrl;
+        ApiEndpoints.baseImgUrl.endsWith('/')
+            ? ApiEndpoints.baseImgUrl.substring(
+              0,
+              ApiEndpoints.baseImgUrl.length - 1,
+            )
+            : ApiEndpoints.baseImgUrl;
 
     final fullImageUrl =
         normalizedImagePath.startsWith('/')
@@ -63,7 +103,7 @@ class ProductApiModel extends Equatable {
       description: description ?? '',
       imageUrl: fullImageUrl,
       price: price,
-      categoryId: categoryId ?? '',
+      category: category?.toEntity(),
     );
   }
 
@@ -74,6 +114,6 @@ class ProductApiModel extends Equatable {
     description,
     imageUrl,
     price,
-    categoryId,
+    category,
   ];
 }

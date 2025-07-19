@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
-
+import 'package:servzz/features/category/domain/entity/category_entity.dart';
 
 class ProductEntity extends Equatable {
   final String? productId;
   final String name;
-  final String? description;  // Nullable now
-  final String? imageUrl;     // Nullable now
+  final String? description;
+  final String? imageUrl;
   final double price;
-  final String? categoryId;   // Nullable now
+  final CategoryEntity? category;  
 
   const ProductEntity({
     this.productId,
@@ -15,7 +15,7 @@ class ProductEntity extends Equatable {
     this.description,
     this.imageUrl,
     required this.price,
-    this.categoryId,
+    this.category,
   });
 
   @override
@@ -25,6 +25,6 @@ class ProductEntity extends Equatable {
         description,
         imageUrl,
         price,
-        categoryId,
+        category,
       ];
 }

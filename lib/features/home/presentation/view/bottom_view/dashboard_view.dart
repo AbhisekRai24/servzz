@@ -215,12 +215,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:servzz/app/service_locator/service_locator.dart';
-import 'package:servzz/features/home/presentation/view_model/banner_slider.dart';
+import 'package:servzz/features/banner_slider/presentation/view_model/banner_slider.dart';
 import 'package:servzz/features/product/domain/entity/product_entity.dart';
+import 'package:servzz/features/product/presentation/view/all_products_view.dart';
 import 'package:servzz/features/product/presentation/view_model/product_event.dart';
 import 'package:servzz/features/product/presentation/view_model/product_state.dart';
 import 'package:servzz/features/product/presentation/view_model/product_view_model.dart';
-
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
@@ -336,23 +336,34 @@ class _DashboardViewBody extends StatelessWidget {
                 // Existing Menu Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       "Menu",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      "See All",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AllProductsView(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "See All",
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 12),
                 GridView.count(
                   crossAxisCount: 2,

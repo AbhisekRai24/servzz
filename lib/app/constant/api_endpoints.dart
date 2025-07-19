@@ -9,7 +9,8 @@ class ApiEndpoints {
 
   // For iPhone (uncomment if needed)
   static const String baseUrl = "$serverAddress/api/";
-  static const String imageUrl = "$baseUrl/uploads/";
+  static const String baseImgUrl = serverAddress; 
+  static const String imageUrl = "$baseImgUrl/uploads/";
 
   static const String login = "auth/login";
   static const String register = "auth/register";
