@@ -14,9 +14,15 @@ import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:servzz/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
-import 'package:servzz/features/cart/presentation/view_model/car_view_model.dart';
+import 'package:servzz/features/cart/presentation/view_model/cart_view_model.dart';
 
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
+import 'package:servzz/features/order/data/data_source/order_datasource.dart';
+import 'package:servzz/features/order/data/data_source/remote_datasource/user_remote_datasource.dart';
+import 'package:servzz/features/order/data/repository/remote_repository/order_remote_repository.dart';
+import 'package:servzz/features/order/domain/repository/order_repository.dart';
+import 'package:servzz/features/order/domain/use_case/create_order_usecase.dart';
+import 'package:servzz/features/order/presentation/view_model/order_view_model.dart';
 import 'package:servzz/features/product/data/data_source/product_remote_data_source.dart';
 import 'package:servzz/features/product/data/repository/remote_repository/product_remote_repository.dart';
 import 'package:servzz/features/product/domain/repository/product_repository.dart';
@@ -29,6 +35,7 @@ import 'package:http/http.dart' as http;
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
+  serviceLocator.registerLazySingleton<Dio>(() => Dio());
   serviceLocator.registerLazySingleton<http.Client>(() => http.Client());
   await _initHiveService();
   await _initApiService();
@@ -40,6 +47,7 @@ Future<void> initDependencies() async {
   await _initProductModule();
 
   await _initCartModule();
+  await _initOrderModule();
 }
 
 Future<void> _initSharedPrefs() async {
@@ -206,4 +214,28 @@ Future<void> _initCartModule() async {
   // If you have Cart-related use cases or repositories, register them here as well
   // e.g. serviceLocator.registerFactory<CartRepository>(() => CartRepositoryImpl());
   // Then inject those into CartViewModel's constructor
+}
+
+Future<void> _initOrderModule() async {
+  print("Registering OrderRemoteDataSource");
+  serviceLocator.registerFactory<OrderRemoteDataSource>(
+    () => OrderRemoteDataSourceImpl(serviceLocator<Dio>()),
+  );
+
+  print("Registering OrderRepository");
+  serviceLocator.registerLazySingleton<OrderRepository>(
+    () => OrderRepositoryImpl(serviceLocator<OrderRemoteDataSource>()),
+  );
+
+  print("Registering CreateOrderUseCase");
+  serviceLocator.registerFactory<CreateOrderUseCase>(
+    () => CreateOrderUseCase(serviceLocator<OrderRepository>()),
+  );
+
+  print("Registering OrderViewModel");
+  serviceLocator.registerFactory<OrderViewModel>(
+    () => OrderViewModel(
+      createOrderUseCase: serviceLocator<CreateOrderUseCase>(),
+    ),
+  );
 }

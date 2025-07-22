@@ -77,15 +77,12 @@ class _AllProductsViewBodyState extends State<_AllProductsViewBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("All Products"),
-        backgroundColor: Colors.red.shade400,
-        foregroundColor: Colors.white,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
+      appBar: AppBar(title: const Text("All Products")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search products...',
@@ -97,42 +94,42 @@ class _AllProductsViewBodyState extends State<_AllProductsViewBody> {
                 fillColor: Colors.white,
               ),
             ),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: BlocBuilder<ProductBloc, ProductState>(
-          builder: (context, state) {
-            if (state.isLoading && state.products.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state.error != null && state.products.isEmpty) {
-              return Center(child: Text("Error: ${state.error}"));
-            } else if (state.products.isEmpty) {
-              return const Center(child: Text("No products found"));
-            }
+            const SizedBox(height: 16),
+            Expanded(
+              child: BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  if (state.isLoading && state.products.isEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state.error != null && state.products.isEmpty) {
+                    return Center(child: Text("Error: ${state.error}"));
+                  } else if (state.products.isEmpty) {
+                    return const Center(child: Text("No products found"));
+                  }
 
-            return GridView.builder(
-              controller: _scrollController,
-              itemCount: state.products.length + 1, // +1 for loading indicator
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.75,
+                  return GridView.builder(
+                    controller: _scrollController,
+                    itemCount: state.products.length + 1,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.75,
+                        ),
+                    itemBuilder: (context, index) {
+                      if (index == state.products.length) {
+                        return state.isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : const SizedBox.shrink();
+                      }
+                      final product = state.products[index];
+                      return _ProductCard(product: product);
+                    },
+                  );
+                },
               ),
-              itemBuilder: (context, index) {
-                if (index == state.products.length) {
-                  // Show loading indicator at bottom
-                  return state.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : const SizedBox.shrink();
-                }
-                final product = state.products[index];
-                return _ProductCard(product: product);
-              },
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

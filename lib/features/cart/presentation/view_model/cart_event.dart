@@ -12,11 +12,7 @@ class AddToCart extends CartEvent {
   final int quantity;
   final List<Addon> addons;
 
-  AddToCart({
-    required this.product,
-    this.quantity = 1,
-    this.addons = const [],
-  });
+  AddToCart({required this.product, this.quantity = 1, this.addons = const []});
 
   @override
   List<Object?> get props => [product.productId, quantity, addons];

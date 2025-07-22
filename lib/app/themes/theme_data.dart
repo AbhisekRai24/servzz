@@ -6,7 +6,7 @@ ThemeData getApplicationTheme() {
   return ThemeData(
     useMaterial3: false,
     primarySwatch: Colors.deepPurple,
-    scaffoldBackgroundColor: Colors.blueGrey,
+    scaffoldBackgroundColor: Colors.blueGrey[50],
     fontFamily: 'Rufina Bold',
 
     // elevatedButtonTheme: ElevatedButtonThemeData(

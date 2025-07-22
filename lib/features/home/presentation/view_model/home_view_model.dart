@@ -18,6 +18,7 @@ class HomeViewModel extends Cubit<HomeState> {
   // ... other methods ...
 
   void onTabTapped(int index) {
+    print("Tapped index: $index");
     emit(state.copyWith(selectedIndex: index));
   }
 

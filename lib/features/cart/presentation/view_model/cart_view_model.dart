@@ -15,15 +15,15 @@ class CartViewModel extends Bloc<CartEvent, CartState> {
   void _onAddToCart(AddToCart event, Emitter<CartState> emit) {
     final items = List<CartItem>.from(state.items);
 
-    bool addonsEqual(List<Addon> a, List<Addon> b) {
-      if (a.length != b.length) return false;
-      for (int i = 0; i < a.length; i++) {
-        if (a[i].name != b[i].name || a[i].quantity != b[i].quantity) {
-          return false;
-        }
+     bool addonsEqual(List<Addon> a, List<Addon> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].name != b[i].name || a[i].quantity != b[i].quantity || a[i].price != b[i].price) {
+        return false;
       }
-      return true;
     }
+    return true;
+  }
 
     final index = items.indexWhere((item) =>
         item.product.productId == event.product.productId &&
@@ -50,16 +50,19 @@ class CartViewModel extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(items: items));
   }
 
-  void _onUpdateQuantity(UpdateQuantity event, Emitter<CartState> emit) {
-    final items = state.items.map((item) {
-      if (item.product.productId == event.productId) {
-        return item.copyWith(quantity: event.quantity);
-      }
-      return item;
-    }).toList();
-    emit(state.copyWith(items: items));
+ void _onUpdateQuantity(UpdateQuantity event, Emitter<CartState> emit) {
+  if (event.quantity <= 0) {
+    _onRemoveFromCart(RemoveFromCart(event.productId), emit);
+    return;
   }
-
+  final items = state.items.map((item) {
+    if (item.product.productId == event.productId) {
+      return item.copyWith(quantity: event.quantity);
+    }
+    return item;
+  }).toList();
+  emit(state.copyWith(items: items));
+}
   void _onClearCart(ClearCart event, Emitter<CartState> emit) {
     emit(const CartState(items: []));
   }
