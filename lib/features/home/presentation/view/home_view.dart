@@ -10,16 +10,27 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       appBar: AppBar(),
       body: BlocBuilder<HomeViewModel, HomeState>(
         builder: (context, state) {
-          return state.views.elementAt(state.selectedIndex);
+          if (state.views.isEmpty) {
+            // Show loading or fallback UI until views are ready
+            return const Center(child: CircularProgressIndicator());
+          }
+          return state.views[state.selectedIndex];
         },
       ),
       bottomNavigationBar: BlocBuilder<HomeViewModel, HomeState>(
         builder: (context, state) {
+          if (state.views.isEmpty) {
+            // Prevents errors before views are initialized
+            return const SizedBox.shrink();
+          }
           return BottomNavigationBar(
+            backgroundColor: Colors.black, // Dark color for the nav bar
+            selectedItemColor: Colors.redAccent, // Active item color
+            unselectedItemColor: Colors.blue[900], // Inactive item color
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.dashboard),
@@ -33,9 +44,13 @@ class HomeView extends StatelessWidget {
                 icon: Icon(Icons.account_circle),
                 label: 'Account',
               ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.history),
+                label: 'Orders',
+              ),
             ],
             currentIndex: state.selectedIndex,
-            selectedItemColor: const Color.fromARGB(255, 218, 145, 145),
+            // selectedItemColor: const Color.fromARGB(255, 218, 145, 145),
             onTap: (index) {
               context.read<HomeViewModel>().onTabTapped(index);
             },

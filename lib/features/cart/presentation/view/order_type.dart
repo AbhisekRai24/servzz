@@ -4,17 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class OrderTypeDialog extends StatelessWidget {
   final Function(String) onOrderTypeSelected;
 
-  const OrderTypeDialog({
-    Key? key,
-    required this.onOrderTypeSelected,
-  }) : super(key: key);
+  const OrderTypeDialog({Key? key, required this.onOrderTypeSelected})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -22,10 +18,7 @@ class OrderTypeDialog extends StatelessWidget {
           children: [
             const Text(
               'Select Order Type',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -42,8 +35,7 @@ class OrderTypeDialog extends StatelessWidget {
                     icon: Icons.restaurant,
                     color: Colors.blue,
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      onOrderTypeSelected('dine_in');
+                      Navigator.of(context).pop('dine-in');
                     },
                   ),
                 ),
@@ -54,8 +46,7 @@ class OrderTypeDialog extends StatelessWidget {
                     icon: Icons.shopping_bag,
                     color: Colors.green,
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      onOrderTypeSelected('takeaway');
+                      Navigator.of(context).pop('takeaway');
                     },
                   ),
                 ),
@@ -97,9 +88,7 @@ class _OrderTypeButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 24),
         backgroundColor: color,
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

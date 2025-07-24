@@ -1,16 +1,145 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:servzz/app/service_locator/service_locator.dart';
+import 'package:servzz/app/shared_pref/token_shared_prefs.dart';
 import 'package:servzz/features/cart/domain/model/cart_item.dart';
+import 'package:servzz/features/cart/presentation/view/order_type.dart';
 import 'package:servzz/features/cart/presentation/view_model/cart_view_model.dart';
 import 'package:servzz/features/cart/presentation/view_model/cart_event.dart';
 import 'package:servzz/features/cart/presentation/view_model/cart_state.dart';
+import 'package:servzz/features/order/data/model/order_api_model.dart';
 import 'package:servzz/features/order/presentation/view_model/order_event.dart';
 import 'package:servzz/features/order/presentation/view_model/order_view_model.dart';
-import 'package:servzz/features/order/presentation/view_model/order_state.dart'; // Import your order states
+import 'package:servzz/features/order/presentation/view_model/order_state.dart';
 import 'package:servzz/features/order/domain/entity/order_entity.dart';
 
 class CartView extends StatelessWidget {
   const CartView({Key? key}) : super(key: key);
+
+  Future<void> _showOrderTypeDialog(
+    BuildContext context,
+    CartState cartState,
+  ) async {
+    final orderType = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return OrderTypeDialog(
+          onOrderTypeSelected: (String selectedOrderType) {
+            Navigator.of(dialogContext).pop(selectedOrderType);
+          },
+        );
+      },
+    );
+
+    if (orderType == null) {
+      // User canceled dialog
+      return;
+    }
+
+    final tokenPrefs = serviceLocator<TokenSharedPrefs>();
+    final orderBloc = context.read<OrderViewModel>();
+
+    // Await userId from shared prefs
+    final userIdResult = await tokenPrefs.getToken();
+
+    userIdResult.fold(
+      (failure) {
+        // Show error if failed to get userId/token
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to get user ID: ${failure.message}')),
+        );
+      },
+      (userId) {
+        if (userId == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('User ID is missing. Please log in again.'),
+            ),
+          );
+          return;
+        }
+
+        final products =
+            cartState.items.map((item) => item.toOrderedProduct()).toList();
+        final total = cartState.totalPrice;
+
+        final order = OrderEntity(
+          userId: userId,
+          products: products,
+          total: total,
+          date: DateTime.now(),
+          status: 'pending',
+          orderType: orderType,
+        );
+        final orderApiModel = OrderApiModel.fromEntity(order);
+        print(
+          'Dispatching CreateOrderEvent with order: ${orderApiModel.toJson()}',
+        );
+        orderBloc.add(CreateOrderEvent(order));
+      },
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context, String orderType) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.check_circle, color: Colors.green, size: 30),
+              SizedBox(width: 10),
+              Text('Order Placed!'),
+            ],
+          ),
+          content: Text(
+            'Your ${orderType == 'dine-in' ? 'Dine In' : 'Takeaway'} order has been placed successfully.',
+            style: const TextStyle(fontSize: 16),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                // Navigate back to home
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.error, color: Colors.red, size: 30),
+              SizedBox(width: 10),
+              Text('Order Failed'),
+            ],
+          ),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +150,35 @@ class CartView extends StatelessWidget {
           showDialog(
             context: context,
             barrierDismissible: false,
-            builder: (_) => const Center(child: CircularProgressIndicator()),
+            builder:
+                (_) => const AlertDialog(
+                  content: Row(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(width: 20),
+                      Text('Placing your order...'),
+                    ],
+                  ),
+                ),
           );
         } else {
           // Remove loading dialog if present
-          Navigator.of(context, rootNavigator: true).pop();
+          if (Navigator.canPop(context)) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
         }
 
         if (state is OrderSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Order placed successfully!')),
-          );
-          // Optionally clear cart or navigate somewhere
+          print('Order successful: ${state.order?.orderType}');
+          _showSuccessDialog(context, state.order?.orderType ?? 'your');
+
+          // Clear cart after successful order (add ClearCart event to your cart_event.dart if not exists)
+          context.read<CartViewModel>().add(ClearCart());
         }
 
         if (state is OrderFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Order failed: ${state.message}')),
-          );
+          print('Order failed: ${state.message}');
+          _showErrorDialog(context, state.message);
         }
       },
       child: Scaffold(
@@ -245,30 +385,7 @@ class CartView extends StatelessWidget {
                     onPressed:
                         state.items.isEmpty
                             ? null
-                            : () {
-                              final orderBloc = context.read<OrderViewModel>();
-
-                              final userId =
-                                  'user-id'; // Replace with real user id
-
-                              final products =
-                                  state.items
-                                      .map((item) => item.toOrderedProduct())
-                                      .toList();
-
-                              final total = state.totalPrice;
-
-                              final order = OrderEntity(
-                                userId: userId,
-                                products: products,
-                                total: total,
-                                date: DateTime.now(),
-                                status: 'pending',
-                                orderType: 'takeaway', // Or get from UI
-                              );
-
-                              orderBloc.add(CreateOrderEvent(order));
-                            },
+                            : () => _showOrderTypeDialog(context, state),
                     child: const Text(
                       'Checkout',
                       style: TextStyle(

@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:servzz/app/constant/api_endpoints.dart';
 import 'package:servzz/app/shared_pref/token_shared_prefs.dart';
 
 import 'package:servzz/core/network/api_service.dart';
+import 'package:servzz/core/network/dio_error_interceptor.dart';
 import 'package:servzz/core/network/hive_service.dart';
 import 'package:servzz/features/auth/data/data_source/local_datasource/user_local_datasource.dart';
 import 'package:servzz/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
@@ -22,6 +26,7 @@ import 'package:servzz/features/order/data/data_source/remote_datasource/user_re
 import 'package:servzz/features/order/data/repository/remote_repository/order_remote_repository.dart';
 import 'package:servzz/features/order/domain/repository/order_repository.dart';
 import 'package:servzz/features/order/domain/use_case/create_order_usecase.dart';
+import 'package:servzz/features/order/domain/use_case/get_order_usecase.dart';
 import 'package:servzz/features/order/presentation/view_model/order_view_model.dart';
 import 'package:servzz/features/product/data/data_source/product_remote_data_source.dart';
 import 'package:servzz/features/product/data/repository/remote_repository/product_remote_repository.dart';
@@ -35,7 +40,19 @@ import 'package:http/http.dart' as http;
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
-  serviceLocator.registerLazySingleton<Dio>(() => Dio());
+  serviceLocator.registerLazySingleton<Dio>(() {
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: ApiEndpoints.baseUrl,
+        connectTimeout: ApiEndpoints.connectionTimeout,
+        receiveTimeout: ApiEndpoints.receiveTimeout,
+        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      ),
+    );
+
+    dio.interceptors.add(DioErrorInterceptor()); // ✅ add the interceptor
+    return dio;
+  });
   serviceLocator.registerLazySingleton<http.Client>(() => http.Client());
   await _initHiveService();
   await _initApiService();
@@ -138,6 +155,13 @@ Future<void> _initAuthModule() async {
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
+  // serviceLocator.registerFactory(
+  //   () => UserLoginUsecase(
+  //     remoteRepository: serviceLocator<UserRemoteRepository>(),
+  //     localRepository: serviceLocator<UserLocalRepository>(),
+  //     tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+  //   ),
+  // );
 
   // serviceLocator.registerFactory(
   //   () => UserRegisterUsecase(
@@ -217,25 +241,39 @@ Future<void> _initCartModule() async {
 }
 
 Future<void> _initOrderModule() async {
+
+  // data source
   print("Registering OrderRemoteDataSource");
   serviceLocator.registerFactory<OrderRemoteDataSource>(
     () => OrderRemoteDataSourceImpl(serviceLocator<Dio>()),
   );
 
+// repository
   print("Registering OrderRepository");
   serviceLocator.registerLazySingleton<OrderRepository>(
     () => OrderRepositoryImpl(serviceLocator<OrderRemoteDataSource>()),
   );
+ 
 
+// use case
   print("Registering CreateOrderUseCase");
   serviceLocator.registerFactory<CreateOrderUseCase>(
     () => CreateOrderUseCase(serviceLocator<OrderRepository>()),
   );
 
+
+  serviceLocator.registerFactory<GetUserOrdersUseCase>(
+    () => GetUserOrdersUseCase(serviceLocator<OrderRepository>()),
+  );
+
+  //bloc
+
   print("Registering OrderViewModel");
   serviceLocator.registerFactory<OrderViewModel>(
     () => OrderViewModel(
       createOrderUseCase: serviceLocator<CreateOrderUseCase>(),
+      getUserOrdersUseCase: serviceLocator<GetUserOrdersUseCase>(),
+
     ),
   );
 }

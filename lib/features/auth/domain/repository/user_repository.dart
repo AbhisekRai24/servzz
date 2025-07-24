@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:servzz/core/error/failure.dart';
+import 'package:servzz/features/auth/data/model/login_response_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 
 abstract interface class IUserRepository {
   Future<Either<Failure, void>> registerUser(UserEntity user);
 
   Future<Either<Failure, String>> loginUser(String email, String password);
+  // Future<Either<Failure, LoginResponseModel>> loginUser(String username, String password);
 
   Future<Either<Failure, String>> uploadProfilePicture(File file);
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:servzz/core/error/failure.dart';
 import 'package:servzz/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
+import 'package:servzz/features/auth/data/model/login_response_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 import 'package:servzz/features/auth/domain/repository/user_repository.dart';
 
@@ -39,6 +40,21 @@ class UserRemoteRepository implements IUserRepository {
       return Left(RemoteDatabaseFailure(message: e.toString()));
     }
   }
+//   Future<Either<Failure, LoginResponseModel>> loginUser(
+//   String username,
+//   String password,
+// ) async {
+//   try {
+//     final response = await _userRemoteDataSource.loginUser(
+//       username,
+//       password,
+//     );
+//     return Right(response);
+//   } catch (e) {
+//     return Left(RemoteDatabaseFailure(message: e.toString()));
+//   }
+// }
+
 
   @override
   Future<Either<Failure, void>> registerUser(UserEntity user) async {

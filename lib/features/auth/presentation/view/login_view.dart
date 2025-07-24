@@ -14,8 +14,22 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController(text: "img@gmail.com");
+    passwordController = TextEditingController(text: "password");
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +153,6 @@ class _LoginViewState extends State<LoginView> {
                               );
                             }
                           },
-
                           child: const Text(
                             "Login",
                             style: TextStyle(fontSize: 18, color: Colors.white),

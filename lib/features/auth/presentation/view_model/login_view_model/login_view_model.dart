@@ -81,8 +81,49 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
       (token) {
         // Handle success case
         emit(state.copyWith(isLoading: false, isSuccess: true));
+        showMySnackBar(
+          context: event.context,
+          message: 'Login Success',
+          color: Colors.red,
+        );
         add(NavigateToHomeViewEvent(context: event.context));
       },
     );
   }
+// void _onLoginWithEmailAndPassword(
+//   LoginWithEmailAndPasswordEvent event,
+//   Emitter<LoginState> emit,
+// ) async {
+//   emit(state.copyWith(isLoading: true));
+
+//   final result = await _studentLoginUsecase(
+//     LoginParams(email: event.email, password: event.password),
+//   );
+
+//   result.fold(
+//     (failure) {
+//       emit(state.copyWith(isLoading: false, isSuccess: false));
+//       showMySnackBar(
+//         context: event.context,
+//         message: 'Invalid credentials. Please try again.',
+//         color: Colors.red,
+//       );
+//     },
+//     (loginResponse) {
+//       // Convert UserApiModel to UserEntity before saving in state
+//       final userEntity = loginResponse.data.toEntity();
+
+//       emit(state.copyWith(
+//         isLoading: false,
+//         isSuccess: true,
+//         token: loginResponse.token,
+//         user: userEntity,
+//         message: loginResponse.message,
+//       ));
+
+//       add(NavigateToHomeViewEvent(context: event.context));
+//     },
+//   );
+// }
+
 }
