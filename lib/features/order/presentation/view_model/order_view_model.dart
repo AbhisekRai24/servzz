@@ -8,12 +8,14 @@ import 'package:jwt_decode/jwt_decode.dart';
 
 class OrderViewModel extends Bloc<OrderEvent, OrderState> {
   final CreateOrderUseCase createOrderUseCase;
-    final GetUserOrdersUseCase getUserOrdersUseCase;
+  final GetUserOrdersUseCase getUserOrdersUseCase;
 
-  OrderViewModel({required this.createOrderUseCase,
-  required this.getUserOrdersUseCase,}) : super(OrderInitial()) {
+  OrderViewModel({
+    required this.createOrderUseCase,
+    required this.getUserOrdersUseCase,
+  }) : super(OrderInitial()) {
     on<CreateOrderEvent>(_onCreateOrder);
-     on<LoadUserOrdersEvent>(_onLoadUserOrders);
+    on<LoadUserOrdersEvent>(_onLoadUserOrders);
     on<RefreshUserOrdersEvent>(_onRefreshUserOrders);
   }
 
@@ -68,12 +70,14 @@ class OrderViewModel extends Bloc<OrderEvent, OrderState> {
       emit(OrderFailure(e.toString()));
     }
   }
+
   Future<void> _onLoadUserOrders(
     LoadUserOrdersEvent event,
     Emitter<OrderState> emit,
   ) async {
     emit(OrderLoading());
     await _fetchOrders(event.userId, emit);
+    print('📦 Fetching order history for userId: ${event.userId}');
   }
 
   Future<void> _onRefreshUserOrders(
@@ -83,15 +87,28 @@ class OrderViewModel extends Bloc<OrderEvent, OrderState> {
     await _fetchOrders(event.userId, emit);
   }
 
-  Future<void> _fetchOrders(
-    String userId,
-    Emitter<OrderState> emit,
-  ) async {
+  //   Future<void> _fetchOrders(String userId, Emitter<OrderState> emit) async {
+  //     final result = await getUserOrdersUseCase(userId);
+
+  //     result.fold(
+  //       (failure) => emit(OrderFailure(failure.message)),
+  //       (orders) => emit(OrderLoaded(orders)),
+  //     );
+  //   }
+  // }
+  Future<void> _fetchOrders(String userId, Emitter<OrderState> emit) async {
+    print('🔁 Calling getUserOrdersUseCase for userId: $userId');
     final result = await getUserOrdersUseCase(userId);
 
     result.fold(
-      (failure) => emit(OrderFailure(failure.message)),
-      (orders) => emit(OrderLoaded(orders)),
+      (failure) {
+        print('❌ Failed to fetch orders: ${failure.message}');
+        emit(OrderFailure(failure.message));
+      },
+      (orders) {
+        print('✅ Orders fetched: ${orders.length}');
+        emit(OrderLoaded(orders));
+      },
     );
   }
 }

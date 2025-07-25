@@ -5,10 +5,7 @@ import 'package:servzz/features/order/domain/entity/order_entity.dart';
 class OrderDetailsSheet extends StatelessWidget {
   final OrderEntity order;
 
-  const OrderDetailsSheet({
-    super.key,
-    required this.order,
-  });
+  const OrderDetailsSheet({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +34,17 @@ class OrderDetailsSheet extends StatelessWidget {
               Text(
                 'Order Details',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 order.date != null
                     ? DateFormat('MMMM dd, yyyy • hh:mm a').format(order.date!)
                     : 'Date not available',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
               ),
               const SizedBox(height: 20),
               Expanded(
@@ -67,15 +64,15 @@ class OrderDetailsSheet extends StatelessWidget {
                   Text(
                     'Total Amount',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     '\$${order.total.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                 ],
               ),
@@ -99,52 +96,54 @@ class OrderDetailsSheet extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Product ID: ${product.id}',
+                    'Product Name: ${product.name}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Text(
                   '\$${product.price.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             Text(
               'Quantity: ${product.quantity}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
             ),
             if (product.addons.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
                 'Add-ons:',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
               ),
-              ...product.addons.map((addon) => Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '• ${addon.addonId} (${addon.quantity}x)',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        Text(
-                          '\$${(addon.price * addon.quantity).toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  )),
+              ...product.addons.map(
+                (addon) => Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 2),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '• ${addon.addonId} (${addon.quantity}x)',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      Text(
+                        '\$${(addon.price * addon.quantity).toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ],
         ),

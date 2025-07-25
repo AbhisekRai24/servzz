@@ -5,7 +5,7 @@ class OrderEntity extends Equatable {
   final List<OrderedProductEntity> products;
   final double total;
   final DateTime? date;
-  final String status;    // "pending", "completed", "processing"
+  final String status; // "pending", "completed", "processing"
   final String orderType; // "dine-in", "takeaway"
 
   const OrderEntity({
@@ -23,12 +23,14 @@ class OrderEntity extends Equatable {
 
 class OrderedProductEntity extends Equatable {
   final String id;
+  final String? name;
   final int quantity;
   final double price;
   final List<AddonEntity> addons;
 
   const OrderedProductEntity({
     required this.id,
+    this.name,
     required this.quantity,
     required this.price,
     required this.addons,

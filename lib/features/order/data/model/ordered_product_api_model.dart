@@ -10,12 +10,14 @@ part 'ordered_product_api_model.g.dart';
 class OrderedProductApiModel extends Equatable {
   @JsonKey(name: '_id')
   final String id;
+  final String? name;
   final int quantity;
   final double price;
   final List<OrderedAddonApiModel> addons;
 
   const OrderedProductApiModel({
     required this.id,
+    this.name,
     required this.quantity,
     required this.price,
     required this.addons,
@@ -29,16 +31,21 @@ class OrderedProductApiModel extends Equatable {
   factory OrderedProductApiModel.fromEntity(OrderedProductEntity entity) {
     return OrderedProductApiModel(
       id: entity.id,
+      name: entity.name,
       quantity: entity.quantity,
       price: entity.price,
       addons:
-          entity.addons.map((addon) => OrderedAddonApiModel.fromEntity(addon)).toList(),
+          entity.addons
+              .map((addon) => OrderedAddonApiModel.fromEntity(addon))
+              .toList(),
     );
   }
 
   OrderedProductEntity toEntity() {
     return OrderedProductEntity(
       id: id,
+      // name:name,
+      name: name ?? 'Unnamed Product', // fallback if null
       quantity: quantity,
       price: price,
       addons: addons.map((a) => a.toEntity()).toList(),
@@ -46,5 +53,5 @@ class OrderedProductApiModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, quantity, price, addons];
+  List<Object?> get props => [id, name, quantity, price, addons];
 }

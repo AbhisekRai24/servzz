@@ -30,6 +30,8 @@ class CartItem {
   OrderedProductEntity toOrderedProduct() {
     return OrderedProductEntity(
       id: product.productId!, // your product ID
+      name: product.name,
+
       quantity: quantity,
       price: product.price, // price per unit (without addons)
       addons:

@@ -53,6 +53,10 @@ class ProductApiModel extends Equatable {
 
   factory ProductApiModel.fromJson(Map<String, dynamic> json) {
     _logger.info('DEBUG: Raw Product JSON: $json');
+    final name = json['name'];
+    if (name == null) {
+      throw Exception('Product name is missing in API response: $json');
+    }
 
     // Handle image
     final imageData = json['productImage'];
@@ -89,7 +93,10 @@ class ProductApiModel extends Equatable {
 
     return ProductApiModel(
       productId: json['_id'] as String?,
-      name: json['name'] ?? '',
+
+      // name: json['name'] as String? ?? 'Unnamed Product',
+      name: name as String,
+
       description: json['description'] as String?,
       imageUrl: imageUrl,
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
