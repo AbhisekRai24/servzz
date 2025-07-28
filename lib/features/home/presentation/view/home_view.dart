@@ -61,13 +61,14 @@ class _HomeViewState extends State<HomeView> {
                 icon: Icon(Icons.shopping_bag_outlined),
                 label: 'My Cart',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.account_circle),
-                label: 'Account',
-              ),
+
               BottomNavigationBarItem(
                 icon: Icon(Icons.history),
                 label: 'Orders',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.account_circle),
+                label: 'Account',
               ),
             ],
             currentIndex: state.selectedIndex,

@@ -18,10 +18,10 @@ class HomeState {
       views: [
         DashboardView(),
         CartView(),
-        
+
+        OrderHistoryPage(userId: userId),
+
         AccountView(),
-        OrderHistoryPage(userId: userId), 
-  
       ],
     );
   }

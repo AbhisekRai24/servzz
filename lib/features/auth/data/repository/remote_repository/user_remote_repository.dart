@@ -7,13 +7,11 @@ import 'package:servzz/features/auth/data/model/login_response_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 import 'package:servzz/features/auth/domain/repository/user_repository.dart';
 
-
 class UserRemoteRepository implements IUserRepository {
   final UserRemoteDataSource _userRemoteDataSource;
 
-  UserRemoteRepository({
-    required UserRemoteDataSource userRemoteDataSource,
-  }) : _userRemoteDataSource = userRemoteDataSource;
+  UserRemoteRepository({required UserRemoteDataSource userRemoteDataSource})
+    : _userRemoteDataSource = userRemoteDataSource;
 
   @override
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
@@ -31,30 +29,12 @@ class UserRemoteRepository implements IUserRepository {
     String password,
   ) async {
     try {
-      final token = await _userRemoteDataSource.loginUser(
-        username,
-        password,
-      );
+      final token = await _userRemoteDataSource.loginUser(username, password);
       return Right(token);
     } catch (e) {
       return Left(RemoteDatabaseFailure(message: e.toString()));
     }
   }
-//   Future<Either<Failure, LoginResponseModel>> loginUser(
-//   String username,
-//   String password,
-// ) async {
-//   try {
-//     final response = await _userRemoteDataSource.loginUser(
-//       username,
-//       password,
-//     );
-//     return Right(response);
-//   } catch (e) {
-//     return Left(RemoteDatabaseFailure(message: e.toString()));
-//   }
-// }
-
 
   @override
   Future<Either<Failure, void>> registerUser(UserEntity user) async {

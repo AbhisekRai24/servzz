@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:servzz/app/constant/api_endpoints.dart';
 import 'package:servzz/app/shared_pref/token_shared_prefs.dart';
+import 'package:servzz/app/themes/view_model/theme_bloc.dart';
 
 import 'package:servzz/core/network/api_service.dart';
 import 'package:servzz/core/network/dio_error_interceptor.dart';
@@ -62,6 +63,7 @@ Future<void> initDependencies() async {
   await _initHomeModule();
   await _initSplashModule();
   await _initProductModule();
+  await _initThemeModule();
 
   await _initCartModule();
   await _initOrderModule();
@@ -125,7 +127,11 @@ Future<void> _initAuthModule() async {
   );
 
   serviceLocator.registerFactory(
-    () => UserRemoteDataSource(apiService: serviceLocator<ApiService>()),
+    () => UserRemoteDataSource(
+      apiService: serviceLocator<ApiService>(),
+      dio: serviceLocator<Dio>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
   );
 
   // Repository
@@ -208,7 +214,10 @@ Future<void> _initAuthModule() async {
 
   // Register LoginViewModel WITHOUT HomeViewModel to avoid circular dependency
   serviceLocator.registerFactory(
-    () => LoginViewModel(serviceLocator<UserLoginUsecase>()),
+    () => LoginViewModel(
+      serviceLocator<UserLoginUsecase>(),
+      serviceLocator<UserGetCurrentUsecase>(),
+    ),
   );
 }
 
@@ -240,27 +249,28 @@ Future<void> _initCartModule() async {
   // Then inject those into CartViewModel's constructor
 }
 
-Future<void> _initOrderModule() async {
+Future<void> _initThemeModule() async {
+  serviceLocator.registerFactory(() => ThemeBloc());
+}
 
+Future<void> _initOrderModule() async {
   // data source
   print("Registering OrderRemoteDataSource");
   serviceLocator.registerFactory<OrderRemoteDataSource>(
     () => OrderRemoteDataSourceImpl(serviceLocator<Dio>()),
   );
 
-// repository
+  // repository
   print("Registering OrderRepository");
   serviceLocator.registerLazySingleton<OrderRepository>(
     () => OrderRepositoryImpl(serviceLocator<OrderRemoteDataSource>()),
   );
- 
 
-// use case
+  // use case
   print("Registering CreateOrderUseCase");
   serviceLocator.registerFactory<CreateOrderUseCase>(
     () => CreateOrderUseCase(serviceLocator<OrderRepository>()),
   );
-
 
   serviceLocator.registerFactory<GetUserOrdersUseCase>(
     () => GetUserOrdersUseCase(serviceLocator<OrderRepository>()),
@@ -273,7 +283,6 @@ Future<void> _initOrderModule() async {
     () => OrderViewModel(
       createOrderUseCase: serviceLocator<CreateOrderUseCase>(),
       getUserOrdersUseCase: serviceLocator<GetUserOrdersUseCase>(),
-
     ),
   );
 }
