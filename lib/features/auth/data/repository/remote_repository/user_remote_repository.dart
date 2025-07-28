@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:servzz/core/error/failure.dart';
 import 'package:servzz/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
-import 'package:servzz/features/auth/data/model/login_response_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 import 'package:servzz/features/auth/domain/repository/user_repository.dart';
 

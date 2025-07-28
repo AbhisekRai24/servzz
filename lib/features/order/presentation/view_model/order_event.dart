@@ -38,6 +38,7 @@ class LoadUserOrdersEvent extends OrderEvent {
 
   const LoadUserOrdersEvent({required this.userId});
 
+
   @override
   List<Object?> get props => [userId];
 }

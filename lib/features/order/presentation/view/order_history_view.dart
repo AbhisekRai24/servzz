@@ -37,6 +37,16 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "View Your Orders Here",
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
+        // Set a background color to contrast the white text
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ), // Makes back button white too
+      ),
       backgroundColor: Colors.white,
       body: Stack(
         children: [
@@ -44,19 +54,11 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           Container(
             height: MediaQuery.of(context).size.height * 0.25,
             width: double.infinity,
-            color: Theme.of(context).primaryColor,
+            color: const Color.fromARGB(255, 220, 219, 219),
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top + 16,
               left: 20,
               right: 20,
-            ),
-            child: const Text(
-              'Order History',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
             ),
           ),
 
@@ -241,7 +243,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total: \$${order.total.toStringAsFixed(2)}',
+                    'Total: \Rs.${order.total.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).primaryColor,

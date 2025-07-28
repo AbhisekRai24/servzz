@@ -86,16 +86,9 @@ class OrderViewModel extends Bloc<OrderEvent, OrderState> {
   ) async {
     await _fetchOrders(event.userId, emit);
   }
+  
 
-  //   Future<void> _fetchOrders(String userId, Emitter<OrderState> emit) async {
-  //     final result = await getUserOrdersUseCase(userId);
 
-  //     result.fold(
-  //       (failure) => emit(OrderFailure(failure.message)),
-  //       (orders) => emit(OrderLoaded(orders)),
-  //     );
-  //   }
-  // }
   Future<void> _fetchOrders(String userId, Emitter<OrderState> emit) async {
     print('🔁 Calling getUserOrdersUseCase for userId: $userId');
     final result = await getUserOrdersUseCase(userId);

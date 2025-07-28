@@ -5,7 +5,6 @@ import 'package:servzz/app/constant/api_endpoints.dart';
 import 'package:servzz/app/shared_pref/token_shared_prefs.dart';
 import 'package:servzz/core/network/api_service.dart';
 import 'package:servzz/features/auth/data/data_source/user_data_source.dart';
-import 'package:servzz/features/auth/data/model/login_response_model.dart';
 import 'package:servzz/features/auth/data/model/user_api_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 
@@ -93,11 +92,9 @@ class UserRemoteDataSource implements IUserDatasource {
       throw Exception('No valid token found');
     }
 
-    // Step 2: Decode JWT token
     Map<String, dynamic> payload = Jwt.parseJwt(token);
     print('Decoded payload: $payload');
 
-    // Step 3: Extract userId safely
     final dynamic rawId = payload['_id'];
     if (rawId == null || rawId is! String) {
       throw Exception('User ID not found or invalid in token payload');
@@ -105,7 +102,6 @@ class UserRemoteDataSource implements IUserDatasource {
 
     final userId = rawId;
 
-    // Step 4: Call API
     final url = '${ApiEndpoints.baseUrl}auth/$userId';
 
     try {

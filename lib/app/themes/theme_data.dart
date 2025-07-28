@@ -40,7 +40,7 @@ ThemeData getApplicationTheme() {
       shadowColor: Colors.black54,
       titleTextStyle: TextStyle(
         fontSize: 15,
-        color: Colors.black,
+        color: Color.fromARGB(255, 255, 255, 255),
         fontWeight: FontWeight.bold,
       ),
     ),

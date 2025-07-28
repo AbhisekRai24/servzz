@@ -183,7 +183,7 @@ class CartView extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: AppBar(title: const Text('Your Cart')),
+
         body: BlocBuilder<CartViewModel, CartState>(
           builder: (context, state) {
             if (state.items.isEmpty) {

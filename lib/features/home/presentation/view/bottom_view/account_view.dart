@@ -29,7 +29,6 @@ class _AccountViewState extends State<AccountView> {
     super.initState();
     _startListeningToShake();
 
-    // Trigger fetching current user on load
     context.read<LoginViewModel>().add(FetchCurrentUserEvent(context: context));
   }
 
@@ -62,6 +61,8 @@ class _AccountViewState extends State<AccountView> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+
     return BlocBuilder<LoginViewModel, LoginState>(
       builder: (context, state) {
         if (state.isLoading) {
@@ -74,69 +75,106 @@ class _AccountViewState extends State<AccountView> {
 
         UserEntity user = state.currentUser!;
 
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Profile Image
-                if (user.image != null && user.image!.isNotEmpty)
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.grey[300],
-                    backgroundImage: NetworkImage(
-                      'http://10.0.2.2:5050/' +
-                          user.image!.replaceAll('\\', '/'),
-                    ),
-                    onBackgroundImageError: (_, __) {},
-                  )
-                else
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.grey[300],
-                    child: Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-
-                const SizedBox(height: 24),
-
-                // User Info Card
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInfoRow(
-                          'Name',
-                          '${user.firstName} ${user.lastName}',
-                        ),
-                        const SizedBox(height: 12),
-                        _buildInfoRow('Email', user.email ?? 'N/A'),
-                        const SizedBox(height: 12),
-                        _buildInfoRow('Username', user.username ?? 'N/A'),
-                        const SizedBox(height: 12),
-                        _buildInfoRow(
-                          'Phone',
-                          (user.phone == null || user.phone!.trim().isEmpty)
-                              ? 'Unregistered'
-                              : user.phone!,
-                        ),
-                        const SizedBox(height: 12),
-                        _buildInfoRow('Role', user.role ?? 'N/A'),
-                      ],
-                    ),
-                  ),
+        return Center(
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: isTablet ? 600 : double.infinity,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
                 ),
-              ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Profile image
+                    Center(
+                      child:
+                          user.image != null && user.image!.isNotEmpty
+                              ? CircleAvatar(
+                                radius: 60,
+                                backgroundImage: NetworkImage(
+                                  'http://10.0.2.2:5050/${user.image!.replaceAll('\\', '/')}',
+                                ),
+                                backgroundColor: Colors.grey[300],
+                                onBackgroundImageError: (_, __) {},
+                              )
+                              : CircleAvatar(
+                                radius: 60,
+                                backgroundColor: Colors.grey[300],
+                                child: Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Info card
+                    Card(
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          children: [
+                            _buildInfoRow(
+                              'Name',
+                              '${user.firstName ?? ''} ${user.lastName ?? ''}',
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInfoRow('Email', user.email ?? 'N/A'),
+                            const SizedBox(height: 12),
+                            _buildInfoRow('Username', user.username ?? 'N/A'),
+                            const SizedBox(height: 12),
+                            _buildInfoRow(
+                              'Phone',
+                              (user.phone == null || user.phone!.trim().isEmpty)
+                                  ? 'Unregistered'
+                                  : user.phone!,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInfoRow('Role', user.role ?? 'N/A'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // 🔴 Logout Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.logout),
+                        label: const Text('Logout'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          showMySnackBar(
+                            context: context,
+                            message: 'Logging out...',
+                            color: Colors.red,
+                          );
+                          context.read<HomeViewModel>().logout(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         );
@@ -151,7 +189,7 @@ class _AccountViewState extends State<AccountView> {
         Text(
           '$label: ',
           style: const TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             fontSize: 16,
             color: Colors.black87,
           ),
