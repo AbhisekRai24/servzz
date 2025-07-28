@@ -130,6 +130,8 @@ class _AccountViewState extends State<AccountView> {
                               ? 'Unregistered'
                               : user.phone!,
                         ),
+                        const SizedBox(height: 12),
+                        _buildInfoRow('Role', user.role ?? 'N/A'),
                       ],
                     ),
                   ),
