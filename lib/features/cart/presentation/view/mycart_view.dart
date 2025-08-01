@@ -7,7 +7,7 @@ import 'package:servzz/features/cart/presentation/view/order_type.dart';
 import 'package:servzz/features/cart/presentation/view_model/cart_view_model.dart';
 import 'package:servzz/features/cart/presentation/view_model/cart_event.dart';
 import 'package:servzz/features/cart/presentation/view_model/cart_state.dart';
-import 'package:servzz/features/order/data/model/order_api_model.dart';
+import 'package:servzz/features/order/data/model/order_api_model.dart'; // Ensure this import is correct if used
 import 'package:servzz/features/order/presentation/view_model/order_event.dart';
 import 'package:servzz/features/order/presentation/view_model/order_view_model.dart';
 import 'package:servzz/features/order/presentation/view_model/order_state.dart';
@@ -15,6 +15,10 @@ import 'package:servzz/features/order/domain/entity/order_entity.dart';
 
 class CartView extends StatelessWidget {
   const CartView({Key? key}) : super(key: key);
+
+  // Define a primary red color and a complementary darker shade
+  static const Color primaryRed = Color(0xFFE53935); // A vibrant red
+  static const Color darkGrey = Color(0xFF333333); // A dark, almost black, grey
 
   Future<void> _showOrderTypeDialog(
     BuildContext context,
@@ -51,7 +55,8 @@ class CartView extends StatelessWidget {
         );
       },
       (userId) {
-        if (userId == null) {
+        if (userId == null || userId.isEmpty) {
+          // Added check for empty userId
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('User ID is missing. Please log in again.'),
@@ -87,29 +92,35 @@ class CartView extends StatelessWidget {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           title: const Row(
             children: [
               Icon(Icons.check_circle, color: Colors.green, size: 30),
               SizedBox(width: 10),
-              Text('Order Placed!'),
+              Text(
+                'Order Placed!',
+                style: TextStyle(color: darkGrey, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           content: Text(
             'Your ${orderType == 'dine-in' ? 'Dine In' : 'Takeaway'} order has been placed successfully.',
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16, color: darkGrey),
           ),
           actions: [
-            ElevatedButton(
+            TextButton(
+              // Changed to TextButton for a flatter look
               onPressed: () {
                 Navigator.of(context).pop(); // Close dialog
-                // Navigate back to home
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+              style: TextButton.styleFrom(
+                foregroundColor: primaryRed, // Use our primary red
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: const Text('OK'),
+              child: const Text('OKAY'),
             ),
           ],
         );
@@ -122,18 +133,28 @@ class CartView extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           title: const Row(
             children: [
-              Icon(Icons.error, color: Colors.red, size: 30),
+              Icon(Icons.error, color: primaryRed, size: 30), // Use primaryRed
               SizedBox(width: 10),
-              Text('Order Failed'),
+              Text(
+                'Order Failed',
+                style: TextStyle(color: darkGrey, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
-          content: Text(message),
+          content: Text(message, style: const TextStyle(color: darkGrey)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+              style: TextButton.styleFrom(
+                foregroundColor: primaryRed, // Use our primary red
+                textStyle: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              child: const Text('DISMISS'),
             ),
           ],
         );
@@ -146,7 +167,6 @@ class CartView extends StatelessWidget {
     return BlocListener<OrderViewModel, OrderState>(
       listener: (context, state) {
         if (state is OrderLoading) {
-          // Show loading dialog
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -154,15 +174,19 @@ class CartView extends StatelessWidget {
                 (_) => const AlertDialog(
                   content: Row(
                     children: [
-                      CircularProgressIndicator(),
+                      CircularProgressIndicator(
+                        color: primaryRed,
+                      ), // Use primaryRed
                       SizedBox(width: 20),
-                      Text('Placing your order...'),
+                      Text(
+                        'Placing your order...',
+                        style: TextStyle(color: darkGrey),
+                      ),
                     ],
                   ),
                 ),
           );
         } else {
-          // Remove loading dialog if present
           if (Navigator.canPop(context)) {
             Navigator.of(context, rootNavigator: true).pop();
           }
@@ -171,8 +195,6 @@ class CartView extends StatelessWidget {
         if (state is OrderSuccess) {
           print('Order successful: ${state.order?.orderType}');
           _showSuccessDialog(context, state.order?.orderType ?? 'your');
-
-          // Clear cart after successful order (add ClearCart event to your cart_event.dart if not exists)
           context.read<CartViewModel>().add(ClearCart());
         }
 
@@ -182,67 +204,105 @@ class CartView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[100],
+        backgroundColor:
+            Colors.grey[50], // Lighter background for better contrast
 
         body: BlocBuilder<CartViewModel, CartState>(
           builder: (context, state) {
             if (state.items.isEmpty) {
-              return const Center(
-                child: Text(
-                  'Your cart is empty',
-                  style: TextStyle(fontSize: 18, color: Colors.grey),
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.shopping_cart_outlined,
+                      size: 100,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Your cart is empty',
+                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Start adding delicious items!',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                  ],
                 ),
               );
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 16,
+              ), // Increased padding
               itemCount: state.items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              separatorBuilder:
+                  (_, __) =>
+                      const SizedBox(height: 12), // More space between items
               itemBuilder: (context, index) {
                 final CartItem item = state.items[index];
 
                 return Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(
+                      15,
+                    ), // Slightly more rounded
                   ),
-                  elevation: 2,
+                  elevation: 4, // Increased elevation for a richer look
+                  shadowColor: Colors.black.withOpacity(
+                    0.1,
+                  ), // Softer shadow color
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
+                    padding: const EdgeInsets.all(
+                      16,
+                    ), // Increased padding inside card
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment
+                              .center, // Center items vertically in row
                       children: [
-                        if (item.product.imageUrl != null &&
-                            item.product.imageUrl!.isNotEmpty)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              item.product.imageUrl!,
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                              errorBuilder:
-                                  (_, __, ___) =>
-                                      const Icon(Icons.broken_image, size: 80),
-                            ),
-                          )
-                        else
-                          Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.image_not_supported,
-                              size: 40,
-                              color: Colors.grey,
-                            ),
-                          ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            10,
+                          ), // Rounded image corners
+                          child:
+                              item.product.imageUrl != null &&
+                                      item.product.imageUrl!.isNotEmpty
+                                  ? Image.network(
+                                    item.product.imageUrl!,
+                                    width: 90, // Slightly larger image
+                                    height: 90,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (_, __, ___) => Container(
+                                          width: 90,
+                                          height: 90,
+                                          color: Colors.grey[200],
+                                          child: const Icon(
+                                            Icons.broken_image,
+                                            size: 50,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                  )
+                                  : Container(
+                                    width: 90,
+                                    height: 90,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.image_not_supported,
+                                      size: 50,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                        ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -253,6 +313,7 @@ class CartView extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                  color: darkGrey, // Use darkGrey for text
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -260,83 +321,99 @@ class CartView extends StatelessWidget {
                               if (item.addons.isNotEmpty) ...[
                                 const SizedBox(height: 6),
                                 const Text(
-                                  "Addons:",
+                                  "Add-ons:",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
+                                    color: darkGrey,
+                                    fontSize: 13,
                                   ),
                                 ),
                                 for (var addon in item.addons)
                                   Text(
                                     '${addon.name} x${addon.quantity} - Rs ${addon.price.toInt()}',
-                                    style: const TextStyle(fontSize: 14),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                               ],
                               const SizedBox(height: 8),
                               Text(
-                                'Total: Rs ${item.totalPrice.toInt()}',
+                                'Rs ${item.totalPrice.toInt()}',
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: Colors.red,
+                                  fontWeight: FontWeight.w800, // Extra bold
+                                  fontSize: 17,
+                                  color:
+                                      primaryRed, // Highlight total with primary red
                                 ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.remove_circle_outline,
-                                    ),
-                                    onPressed: () {
-                                      if (item.quantity > 1) {
-                                        context.read<CartViewModel>().add(
-                                          UpdateQuantity(
-                                            productId: item.product.productId!,
-                                            quantity: item.quantity - 1,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
-                                  Text(
-                                    item.quantity.toString(),
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add_circle_outline),
-                                    onPressed: () {
-                                      context.read<CartViewModel>().add(
-                                        UpdateQuantity(
-                                          productId: item.product.productId!,
-                                          quantity: item.quantity + 1,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
                               ),
                             ],
                           ),
                         ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.add_circle,
+                                color: primaryRed,
+                                size: 28,
+                              ), // Larger, filled icon
+                              onPressed: () {
+                                context.read<CartViewModel>().add(
+                                  UpdateQuantity(
+                                    productId: item.product.productId!,
+                                    quantity: item.quantity + 1,
+                                  ),
+                                );
+                              },
+                              visualDensity:
+                                  VisualDensity.compact, // Reduce padding
+                            ),
+                            Text(
+                              item.quantity.toString(),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: darkGrey,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.remove_circle,
+                                color: Colors.grey,
+                                size: 28,
+                              ), // Larger, filled icon, subtle color
+                              onPressed: () {
+                                if (item.quantity > 1) {
+                                  context.read<CartViewModel>().add(
+                                    UpdateQuantity(
+                                      productId: item.product.productId!,
+                                      quantity: item.quantity - 1,
+                                    ),
+                                  );
+                                } else {
+                                  // Optionally show a dialog before removing last item
+                                  _showRemoveConfirmationDialog(context, item);
+                                }
+                              },
+                              visualDensity: VisualDensity.compact,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 8), // Added some spacing
                         IconButton(
                           icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
+                            Icons.delete_forever, // Stronger delete icon
+                            color:
+                                Colors
+                                    .redAccent, // A slightly different red for delete
+                            size: 28,
                           ),
                           onPressed: () {
-                            context.read<CartViewModel>().add(
-                              RemoveFromCart(item.product.productId!),
-                            );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${item.product.name} removed from cart',
-                                ),
-                              ),
-                            );
+                            _showRemoveConfirmationDialog(context, item);
                           },
+                          visualDensity: VisualDensity.compact,
                         ),
                       ],
                     ),
@@ -349,14 +426,24 @@ class CartView extends StatelessWidget {
         bottomNavigationBar: BlocBuilder<CartViewModel, CartState>(
           builder: (context, state) {
             return Container(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(
+                24,
+                20,
+                24,
+                20,
+              ), // More vertical padding
               decoration: BoxDecoration(
                 color: Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(25),
+                ), // Rounded top corners
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12.withOpacity(0.1),
-                    offset: const Offset(0, -1),
-                    blurRadius: 8,
+                    color: Colors.black12.withOpacity(
+                      0.15,
+                    ), // Stronger, yet soft shadow
+                    offset: const Offset(0, -4),
+                    blurRadius: 10,
                   ),
                 ],
               ),
@@ -364,33 +451,52 @@ class CartView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'Total: Rs ${state.totalPrice.toInt()}',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
-                    textAlign: TextAlign.right,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Total:',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: darkGrey,
+                        ),
+                      ),
+                      Text(
+                        'Rs ${state.totalPrice.toInt()}',
+                        style: const TextStyle(
+                          fontSize: 26, // Larger total price
+                          fontWeight: FontWeight.w900, // Extra heavy
+                          color: primaryRed, // Highlight with primary red
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16), // More space before button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 18,
+                      ), // Taller button
+                      backgroundColor: primaryRed, // Use primary red
+                      foregroundColor: Colors.white, // White text
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          12,
+                        ), // More rounded button
                       ),
+                      elevation: 5, // Add elevation to button
                     ),
                     onPressed:
                         state.items.isEmpty
-                            ? null
+                            ? null // Disable if cart is empty
                             : () => _showOrderTypeDialog(context, state),
                     child: const Text(
-                      'Checkout',
+                      'Proceed to Checkout', // More descriptive text
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 19, // Larger text
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8, // Slight letter spacing
                       ),
                     ),
                   ),
@@ -400,6 +506,53 @@ class CartView extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  void _showRemoveConfirmationDialog(BuildContext context, CartItem item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text('Remove Item?', style: TextStyle(color: darkGrey)),
+          content: Text(
+            'Are you sure you want to remove ${item.product.name} from your cart?',
+            style: const TextStyle(color: darkGrey),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('CANCEL', style: TextStyle(color: Colors.grey)),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'REMOVE',
+                style: TextStyle(
+                  color: primaryRed,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                context.read<CartViewModel>().add(
+                  RemoveFromCart(item.product.productId!),
+                );
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${item.product.name} removed from cart.'),
+                    backgroundColor: Colors.red[400],
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
