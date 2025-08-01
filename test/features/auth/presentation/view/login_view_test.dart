@@ -69,7 +69,6 @@
 //       );
 //     });
 
-   
 //   });
 // }
 import 'package:flutter/material.dart';
@@ -83,10 +82,8 @@ import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_get_current_usecase.dart';
 import 'package:servzz/features/auth/presentation/view/login_view.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
-import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_event.dart';
 import 'package:servzz/core/error/failure.dart';
 
-// ------------------------
 // Mocks and Fakes
 // ------------------------
 class MockUserLoginUsecase extends Mock implements UserLoginUsecase {}
@@ -103,29 +100,27 @@ void main() {
     registerFallbackValue(FakeLoginParams());
   });
 
- setUp(() {
-  mockUserLoginUsecase = MockUserLoginUsecase();
-  mockUserGetCurrentUsecase = MockUserGetCurrentUsecase();
+  setUp(() {
+    mockUserLoginUsecase = MockUserLoginUsecase();
+    mockUserGetCurrentUsecase = MockUserGetCurrentUsecase();
 
-  final dummyUser = UserEntity(
-    userId: '1',
-    username: 'Test User',
-    email: 'test@example.com',
-  );
+    final dummyUser = UserEntity(
+      userId: '1',
+      username: 'Test User',
+      email: 'test@example.com',
+    );
 
-  when(() => mockUserGetCurrentUsecase()).thenAnswer(
-    (_) async => Right(dummyUser),
-  );
-});
-
+    when(
+      () => mockUserGetCurrentUsecase(),
+    ).thenAnswer((_) async => Right(dummyUser));
+  });
 
   Widget buildLoginScreen() {
     return MaterialApp(
       home: BlocProvider<LoginViewModel>(
-        create: (_) => LoginViewModel(
-          mockUserLoginUsecase,
-          mockUserGetCurrentUsecase,
-        ),
+        create:
+            (_) =>
+                LoginViewModel(mockUserLoginUsecase, mockUserGetCurrentUsecase),
         child: const LoginView(),
       ),
     );
@@ -164,6 +159,5 @@ void main() {
         findsOneWidget,
       );
     });
-
   });
 }
