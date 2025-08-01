@@ -10,4 +10,5 @@ abstract interface class IUserDatasource {
   Future<String> uploadProfilePicture(File file);
 
   Future<UserEntity> getCurrentUser();
+  Future<UserEntity> updateUser(UserEntity userData, {File? profileImage});
 }

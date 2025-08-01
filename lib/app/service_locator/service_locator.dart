@@ -13,6 +13,7 @@ import 'package:servzz/features/auth/data/data_source/local_datasource/user_loca
 import 'package:servzz/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
 import 'package:servzz/features/auth/data/repository/local_repository/user_local_repository.dart';
 import 'package:servzz/features/auth/data/repository/remote_repository/user_remote_repository.dart';
+import 'package:servzz/features/auth/domain/use_case/update_user_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_get_current_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_image_upload_usecase.dart';
 import 'package:servzz/features/auth/domain/use_case/user_login_usecase.dart';
@@ -22,6 +23,7 @@ import 'package:servzz/features/auth/presentation/view_model/register_view_model
 import 'package:servzz/features/cart/presentation/view_model/cart_view_model.dart';
 
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
+import 'package:servzz/features/home/presentation/view_model/update_viewmodel/update_viewmodel.dart';
 import 'package:servzz/features/order/data/data_source/order_datasource.dart';
 import 'package:servzz/features/order/data/data_source/remote_datasource/user_remote_datasource.dart';
 import 'package:servzz/features/order/data/repository/remote_repository/order_remote_repository.dart';
@@ -204,6 +206,11 @@ Future<void> _initAuthModule() async {
       userRepository: serviceLocator<UserRemoteRepository>(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => UpdateUserUsecase(
+      userRepository: serviceLocator<UserRemoteRepository>(),
+    ),
+  );
 
   serviceLocator.registerFactory(
     () => RegisterViewModel(
@@ -217,6 +224,11 @@ Future<void> _initAuthModule() async {
     () => LoginViewModel(
       serviceLocator<UserLoginUsecase>(),
       serviceLocator<UserGetCurrentUsecase>(),
+    ),
+  );
+  serviceLocator.registerFactory(
+    () => UpdateUserViewModel(
+      updateUserUsecase: serviceLocator<UpdateUserUsecase>(),
     ),
   );
 }

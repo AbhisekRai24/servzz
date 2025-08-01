@@ -20,7 +20,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    emailController = TextEditingController(text: "img@gmail.com");
+    emailController = TextEditingController(text: "mark@gmail.com");
     passwordController = TextEditingController(text: "password");
   }
 

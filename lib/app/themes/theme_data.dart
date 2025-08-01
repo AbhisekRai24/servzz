@@ -9,19 +9,6 @@ ThemeData getApplicationTheme() {
     scaffoldBackgroundColor: Colors.blueGrey[50],
     fontFamily: 'Rufina Bold',
 
-    // elevatedButtonTheme: ElevatedButtonThemeData(
-    //   style: ElevatedButton.styleFrom(
-    //     textStyle: const TextStyle(
-    //       fontSize: 30,
-    //       color: Colors.greenAccent,
-    //       fontWeight: FontWeight.w600,
-    //       ),
-    //     backgroundColor: Color(0xFFA62123),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(5),
-    //        ),
-    //   ),
-    // ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,

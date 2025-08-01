@@ -9,6 +9,7 @@ import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_event.dart';
 import 'package:servzz/features/auth/presentation/view_model/login_view_model/login_state.dart';
+import 'package:servzz/features/home/presentation/view/bottom_view/update_use_view.dart';
 import 'package:servzz/features/home/presentation/view_model/home_view_model.dart';
 
 class AccountView extends StatefulWidget {
@@ -143,6 +144,41 @@ class _AccountViewState extends State<AccountView> {
                             _buildInfoRow('Role', user.role ?? 'N/A'),
                           ],
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Edit Profile'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                      UpdateUserView(currentUser: user),
+                            ),
+                          ).then((updated) {
+                            // Optionally refresh the user info if updated == true
+                            if (updated == true) {
+                              context.read<LoginViewModel>().add(
+                                FetchCurrentUserEvent(context: context),
+                              );
+                            }
+                          });
+                        },
                       ),
                     ),
                     const SizedBox(height: 32),

@@ -128,24 +128,6 @@ class UserRemoteDataSource implements IUserDatasource {
     }
   }
 
-  // Future<LoginResponseModel> loginUser(String email, String password) async {
-  //   try {
-  //     final response = await _apiService.dio.post(
-  //       ApiEndpoints.login,
-  //       data: {'email': email, 'password': password},
-  //     );
-  //     if (response.statusCode == 200) {
-  //       return LoginResponseModel.fromJson(response.data);
-  //     } else {
-  //       throw Exception(response.statusMessage);
-  //     }
-  //   } on DioException catch (e) {
-  //     throw Exception('Failed to login user: ${e.message}');
-  //   } catch (e) {
-  //     throw Exception('Failed to login user: $e');
-  //   }
-  // }
-
   @override
   Future<void> registerUser(UserEntity studentData) async {
     try {
@@ -171,5 +153,101 @@ class UserRemoteDataSource implements IUserDatasource {
   @override
   Future<String> uploadProfilePicture(File file) {
     throw UnimplementedError('Upload profile picture API not implemented yet');
+  }
+
+  @override
+  Future<UserEntity> updateUser(
+    UserEntity userData, {
+    File? profileImage,
+  }) async {
+    try {
+      // Step 1: Get token from shared prefs
+      final tokenResult = await _tokenSharedPrefs.getToken();
+      final token = tokenResult.fold(
+        (failure) => throw Exception(failure.message),
+        (token) => token,
+      );
+
+      print('Retrieved token: $token');
+
+      if (token == null || token.isEmpty) {
+        throw Exception('No valid token found');
+      }
+
+      // Step 2: Decode JWT to get user ID
+      Map<String, dynamic> payload = Jwt.parseJwt(token);
+      print('Decoded payload: $payload');
+
+      final dynamic rawId = payload['_id'];
+      if (rawId == null || rawId is! String) {
+        throw Exception('User ID not found or invalid in token payload');
+      }
+
+      final userId = rawId;
+      final url = '${ApiEndpoints.baseUrl}auth/$userId';
+
+      // Step 3: Prepare request data
+      FormData formData;
+
+      if (profileImage != null) {
+        // If profile image is provided, use FormData for multipart upload
+        final userApiModel = UserApiModel.fromEntity(userData);
+        final userJson = userApiModel.toJson();
+
+        formData = FormData();
+
+        // Add user data fields to FormData
+        userJson.forEach((key, value) {
+          if (value != null) {
+            formData.fields.add(MapEntry(key, value.toString()));
+          }
+        });
+
+        // Add profile image file
+        String fileName = profileImage.path.split('/').last;
+        formData.files.add(
+          MapEntry(
+            'profileImage',
+            await MultipartFile.fromFile(profileImage.path, filename: fileName),
+          ),
+        );
+      } else {
+        // If no profile image, send JSON data
+        final userApiModel = UserApiModel.fromEntity(userData);
+        formData = FormData.fromMap(userApiModel.toJson());
+      }
+
+      // Step 4: Make the API call
+      final response = await _dio.put(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type':
+                profileImage != null
+                    ? 'multipart/form-data'
+                    : 'application/json',
+          },
+        ),
+      );
+
+      // Step 5: Handle response
+      if (response.statusCode == 200) {
+        return UserApiModel.fromJson(response.data['data']).toEntity();
+      } else {
+        throw Exception('Failed to update user: ${response.statusMessage}');
+      }
+    } on DioError catch (e) {
+      print('Caught DioError in updateUser: ${e.message}');
+      if (e.response != null) {
+        print('Status Code: ${e.response?.statusCode}');
+        print('Response Data: ${e.response?.data}');
+      }
+      throw Exception('Failed to update user due to network error.');
+    } catch (e) {
+      print('Unexpected error in updateUser: $e');
+      throw Exception('Unexpected error: $e');
+    }
   }
 }

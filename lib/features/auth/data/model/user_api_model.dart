@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 
+// dart run build_runner build -d
 part 'user_api_model.g.dart';
 
 @JsonSerializable()
@@ -10,11 +11,14 @@ class UserApiModel extends Equatable {
   final String? userId;
   final String? firstName;
   final String? lastName;
-  @JsonKey(name: 'profileImage')
+  // @JsonKey(name: 'profileImage')
+  @JsonKey(name: 'profileImage', includeIfNull: false)
   final String? image;
   final String? phone;
   final String? username;
+  @JsonKey(includeIfNull: false)
   final String? email;
+  @JsonKey(includeIfNull: false)
   final String? password;
   final String? role;
 

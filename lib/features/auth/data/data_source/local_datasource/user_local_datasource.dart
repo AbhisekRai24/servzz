@@ -25,38 +25,7 @@ class UserLocalDatasource implements IUserDatasource {
       throw Exception("Login failed: $e");
     }
   }
-  //   Future<LoginResponseModel> loginUser(String username, String password) async {
-  //   try {
-  //     final userData = await _hiveService.login(username, password);
-
-  //     if (userData != null && userData.password == password) {
-  //       // Convert Hive model to API model
-  //       final userModel = UserApiModel(
-  //         userId: userData.userId,
-  //         username: userData.username,
-  //         firstName: userData.firstName,
-  //         lastName: userData.lastName,
-  //         email: userData.email,
-  //         password: userData.password,
-  //         image: userData.image,
-  //         phone: userData.phone,
-  //       );
-
-  //       // Return token and user data
-  //       return LoginResponseModel(
-  //         success: true,
-  //         message: 'Login successful',
-  //         data: userModel,
-  //         token: 'local_dummy_token', // Optional: replace with actual logic
-  //       );
-  //     } else {
-  //       throw Exception("Invalid username or password");
-  //     }
-  //   } catch (e) {
-  //     throw Exception("Local login failed: $e");
-  //   }
-  // }
-
+  
   @override
   Future<void> registerUser(UserEntity user) async {
     try {
@@ -77,6 +46,12 @@ class UserLocalDatasource implements IUserDatasource {
   @override
   Future<String> uploadProfilePicture(File file) {
     // TODO: implement uploadProfilePicture
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<UserEntity> updateUser(UserEntity userData, {File? profileImage}) {
+    // TODO: implement updateUser
     throw UnimplementedError();
   }
 }

@@ -23,10 +23,10 @@ Map<String, dynamic> _$UserApiModelToJson(UserApiModel instance) =>
       '_id': instance.userId,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
-      'profileImage': instance.image,
+      if (instance.image case final value?) 'profileImage': value,
       'phone': instance.phone,
       'username': instance.username,
-      'email': instance.email,
-      'password': instance.password,
+      if (instance.email case final value?) 'email': value,
+      if (instance.password case final value?) 'password': value,
       'role': instance.role,
     };

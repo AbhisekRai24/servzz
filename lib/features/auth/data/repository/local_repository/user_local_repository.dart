@@ -57,4 +57,13 @@ class UserLocalRepository implements IUserRepository {
     // TODO: implement uploadProfilePicture
     throw UnimplementedError();
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> updateUser(
+    UserEntity userData, {
+    File? profileImage,
+  }) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
 }
