@@ -1,265 +1,687 @@
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:servzz/app/service_locator/service_locator.dart';
+// import 'package:servzz/features/banner_slider/presentation/view_model/banner_slider.dart';
+// import 'package:servzz/features/product/domain/entity/product_entity.dart';
+// import 'package:servzz/features/product/presentation/view/all_products_view.dart';
+// import 'package:servzz/features/product/presentation/view_model/product_event.dart';
+// import 'package:servzz/features/product/presentation/view_model/product_state.dart';
+// import 'package:servzz/features/product/presentation/view_model/product_view_model.dart';
+
+// class DashboardView extends StatelessWidget {
+//   const DashboardView({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocProvider<ProductBloc>(
+//       create:
+//           (context) =>
+//               serviceLocator<ProductBloc>()..add(FetchProductsEvent(limit: 10)),
+//       child: const _DashboardViewBody(),
+//     );
+//   }
+// }
+
+// class _DashboardViewBody extends StatelessWidget {
+//   const _DashboardViewBody({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.blue[50],
+//       body: SafeArea(
+//         child: SingleChildScrollView(
+//           child: Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 16),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Row(
+//                   children: const [
+//                     SizedBox(height: 80),
+//                     CircleAvatar(
+//                       radius: 25,
+//                       backgroundImage: AssetImage("assets/image/markk.jpg"),
+//                     ),
+//                     SizedBox(width: 12),
+//                     Text(
+//                       "Hello! Welcome to Servzz",
+//                       style: TextStyle(
+//                         fontSize: 16,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 const SizedBox(height: 20),
+//                 // Search bar
+//                 Container(
+//                   padding: const EdgeInsets.symmetric(horizontal: 16),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(30),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.grey.withOpacity(0.3),
+//                         blurRadius: 5,
+//                         offset: const Offset(0, 3),
+//                       ),
+//                     ],
+//                   ),
+//                   child: const TextField(
+//                     decoration: InputDecoration(
+//                       icon: Icon(Icons.search),
+//                       hintText: "Search",
+//                       border: InputBorder.none,
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(height: 20),
+//                 // Banner Slider
+//                 const BannerSlider(),
+//                 const SizedBox(height: 20),
+
+//                 // Products Section
+//                 const Text(
+//                   "Featured Products",
+//                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//                 ),
+//                 const SizedBox(height: 12),
+
+//                 BlocBuilder<ProductBloc, ProductState>(
+//                   builder: (context, state) {
+//                     if (state.isLoading) {
+//                       return const Center(child: CircularProgressIndicator());
+//                     } else if (state.error != null) {
+//                       return Center(child: Text("Error: ${state.error}"));
+//                     } else if (state.products.isEmpty) {
+//                       return const Center(child: Text("No products found"));
+//                     } else {
+//                       return GridView.builder(
+//                         shrinkWrap: true,
+//                         physics: const NeverScrollableScrollPhysics(),
+//                         itemCount: state.products.length,
+//                         gridDelegate:
+//                             const SliverGridDelegateWithFixedCrossAxisCount(
+//                               crossAxisCount: 2,
+//                               crossAxisSpacing: 12,
+//                               mainAxisSpacing: 12,
+//                               childAspectRatio: 1.2,
+//                             ),
+//                         itemBuilder: (context, index) {
+//                           final product = state.products[index];
+//                           return _buildProductTile(product);
+//                         },
+//                       );
+//                     }
+//                   },
+//                 ),
+
+//                 const SizedBox(height: 20),
+
+//                 // Existing Menu Section
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                   children: [
+//                     const Text(
+//                       "Menu",
+//                       style: TextStyle(
+//                         fontSize: 18,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                     GestureDetector(
+//                       onTap: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (_) => const AllProductsView(),
+//                           ),
+//                         );
+//                       },
+//                       child: const Text(
+//                         "See All",
+//                         style: TextStyle(
+//                           color: Colors.red,
+//                           fontWeight: FontWeight.w500,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+
+//                 const SizedBox(height: 12),
+//                 GridView.count(
+//                   crossAxisCount: 2,
+//                   shrinkWrap: true,
+//                   crossAxisSpacing: 12,
+//                   mainAxisSpacing: 12,
+//                   physics: const NeverScrollableScrollPhysics(),
+//                   childAspectRatio: 1.2,
+//                   children: const [
+//                     _buildMenuTile(Icons.local_cafe, "Coffee"),
+//                     _buildMenuTile(Icons.icecream, "Cold Beverages"),
+//                     _buildMenuTile(Icons.cake, "Desserts"),
+//                     _buildMenuTile(Icons.restaurant_menu, "Full Menu"),
+//                   ],
+//                 ),
+
+//                 const SizedBox(height: 5),
+//                 const SizedBox(height: 20),
+//                 const Text(
+//                   "Your Orders",
+//                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//                 ),
+//                 const SizedBox(height: 10),
+//                 ListView.builder(
+//                   shrinkWrap: true,
+//                   physics: const NeverScrollableScrollPhysics(),
+//                   itemCount: 4,
+//                   itemBuilder: (context, index) {
+//                     return Padding(
+//                       padding: const EdgeInsets.only(bottom: 10),
+//                       child: Card(
+//                         elevation: 2,
+//                         shape: RoundedRectangleBorder(
+//                           borderRadius: BorderRadius.circular(12),
+//                         ),
+//                         child: ListTile(
+//                           leading: const CircleAvatar(
+//                             backgroundImage: AssetImage(
+//                               "assets/image/food_banner.jpg",
+//                             ),
+//                             radius: 25,
+//                           ),
+//                           title: Text("Order #${index + 1}"),
+//                           onTap: () {},
+//                         ),
+//                       ),
+//                     );
+//                   },
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildProductTile(ProductEntity product) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(16),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.grey.withOpacity(0.2),
+//             blurRadius: 4,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Expanded(
+//             child:
+//                 product.imageUrl != null
+//                     ? Image.network(
+//                       product.imageUrl!,
+//                       fit: BoxFit.cover,
+//                       width: double.infinity,
+//                     )
+//                     : const Icon(
+//                       Icons.image_not_supported,
+//                       size: 50,
+//                       color: Colors.grey,
+//                     ),
+//           ),
+//           const SizedBox(height: 10),
+//           Text(
+//             product.name,
+//             style: const TextStyle(fontWeight: FontWeight.w600),
+//             maxLines: 1,
+//             overflow: TextOverflow.ellipsis,
+//           ),
+//           Text(
+//             'Rs ${product.price.toString()}',
+//             style: TextStyle(
+//               fontWeight: FontWeight.bold,
+//               color: Colors.blue[600],
+//             ),
+//           ),
+//           const SizedBox(height: 10),
+//         ],
+//       ),
+//     );
+//   }
+// }
+
+// class _buildMenuTile extends StatelessWidget {
+//   final IconData icon;
+//   final String title;
+
+//   const _buildMenuTile(this.icon, this.title, {Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(16),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.grey.withOpacity(0.2),
+//             blurRadius: 4,
+//             offset: const Offset(0, 3),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Icon(icon, size: 40, color: Colors.black87),
+//           const SizedBox(height: 10),
+//           Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+//         ],
+//       ),
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
-import 'package:servzz/common/app_drawer.dart';
-import 'package:servzz/features/home/presentation/view_model/banner_slider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:servzz/app/service_locator/service_locator.dart';
+import 'package:servzz/app/shared_pref/token_shared_prefs.dart';
+import 'package:servzz/core/error/failure.dart';
+import 'package:servzz/features/banner_slider/presentation/view_model/banner_slider.dart';
+import 'package:servzz/features/order/domain/entity/order_entity.dart';
+import 'package:servzz/features/order/presentation/view/four_order_view.dart';
+import 'package:servzz/features/order/presentation/view/order_history_view.dart';
+import 'package:servzz/features/order/presentation/view_model/order_event.dart';
+import 'package:servzz/features/order/presentation/view_model/order_state.dart';
+import 'package:servzz/features/order/presentation/view_model/order_view_model.dart';
+import 'package:servzz/features/product/domain/entity/product_entity.dart';
+import 'package:servzz/features/product/presentation/view/all_products_view.dart';
+import 'package:servzz/features/product/presentation/view_model/product_event.dart';
+import 'package:servzz/features/product/presentation/view_model/product_state.dart';
+import 'package:servzz/features/product/presentation/view_model/product_view_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProductBloc>(
+          create:
+              (context) =>
+                  serviceLocator<ProductBloc>()
+                    ..add(FetchProductsEvent(limit: 10)),
+        ),
+        BlocProvider<OrderViewModel>(
+          create: (context) => serviceLocator<OrderViewModel>(),
+        ),
+      ],
+      child: const _DashboardViewBody(),
+    );
+  }
+}
+
+class _DashboardViewBody extends StatefulWidget {
+  const _DashboardViewBody({Key? key}) : super(key: key);
+
+  @override
+  State<_DashboardViewBody> createState() => _DashboardViewBodyState();
+}
+
+class _DashboardViewBodyState extends State<_DashboardViewBody> {
+  String? userId;
+  bool hasDispatchedOrdersEvent = false;
+
+  late final TokenSharedPrefs tokenPrefs;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize TokenSharedPrefs with shared preferences from service locator or directly
+    tokenPrefs = serviceLocator<TokenSharedPrefs>();
+
+    _initUserIdAndLoadOrders();
+  }
+
+  Future<void> _initUserIdAndLoadOrders() async {
+    final tokenEither = await tokenPrefs.getToken();
+
+    tokenEither.fold(
+      (failure) {
+        // Handle error fetching token
+        print('[ERROR] Failed to get token: ${failure.message}');
+      },
+      (token) {
+        print('[DEBUG] Retrieved token: $token');
+
+        if (token == null || token.isEmpty) {
+          print('[DEBUG] Token is null or empty');
+          return;
+        }
+
+        final extractedUserId = Jwt.parseJwt(token)['_id'] as String?;
+        print('[DEBUG] Extracted userId from token: $extractedUserId');
+
+        if (extractedUserId == null) {
+          print('[DEBUG] userId extracted from token is null');
+          return;
+        }
+
+        setState(() {
+          userId = extractedUserId;
+        });
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (userId != null && !hasDispatchedOrdersEvent) {
+      context.read<OrderViewModel>().add(LoadUserOrdersEvent(userId: userId!));
+      print('[DEBUG] Dispatched LoadUserOrdersEvent for userId: $userId');
+      hasDispatchedOrdersEvent = true;
+    }
+
     return Scaffold(
       backgroundColor: Colors.blue[50],
-      // drawer: AppDrawer(),
-      // appBar: AppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    SizedBox(height: 80),
-                    CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage("assets/image/markk.jpg"),
-                    ),
-                    SizedBox(width: 12),
-                    Text(
-                      "Hello! Welcome to Servzz",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome header
+              Row(
+                children: const [
+                  SizedBox(height: 80),
+                  CircleAvatar(
+                    radius: 25,
+                    backgroundImage: AssetImage("assets/image/markk.jpg"),
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    "Hello! Welcome to Servzz",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Search bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
-
-                // Search bar
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.search),
-                      hintText: "Search",
-                      border: InputBorder.none,
-                    ),
+                child: const TextField(
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.search),
+                    hintText: "Search",
+                    border: InputBorder.none,
                   ),
                 ),
-                SizedBox(height: 20),
+              ),
+              const SizedBox(height: 20),
 
-                // // Banner
-                // ClipRRect(
-                //   borderRadius: BorderRadius.circular(20),
-                //   child: Image.asset(
-                //     "assets/image/food_banner.jpg",
-                //     fit: BoxFit.cover,
-                //     height: 180,
-                //     width: double.infinity,
-                //   ),
-                // ),
-                // SizedBox(height: 20),
+              // Banner Slider
+              const BannerSlider(),
+              const SizedBox(height: 20),
 
-                // Rotating Banner
-                // SizedBox(
-                //   height: 180,
-                //   child: PageView.builder(
-                //     itemCount: 4, // Total images
-                //     controller: PageController(viewportFraction: 0.95),
-                //     itemBuilder: (context, index) {
-                //       final imageList = [
-                //         "assets/image/food_banner.jpg",
-                //         "assets/image/offer_banner_1.jpg",
-                //         "assets/image/offer_banner_2.jpg",
-                //         "assets/image/offer_banner_3.jpg",
-                //       ];
+              // Products Section
+              const Text(
+                "Featured Products",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
 
-                //       return Padding(
-                //         padding: const EdgeInsets.symmetric(horizontal: 4),
-                //         child: ClipRRect(
-                //           borderRadius: BorderRadius.circular(20),
-                //           child: Image.asset(
-                //             imageList[index],
-                //             fit: BoxFit.cover,
-                //             width: double.infinity,
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //   ),
-                // ),
-                const BannerSlider(),
-                SizedBox(height: 20),
+              BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state.error != null) {
+                    return Center(child: Text("Error: ${state.error}"));
+                  } else if (state.products.isEmpty) {
+                    return const Center(child: Text("No products found"));
+                  } else {
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: state.products.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.2,
+                          ),
+                      itemBuilder: (context, index) {
+                        final product = state.products[index];
+                        return _buildProductTile(product);
+                      },
+                    );
+                  }
+                },
+              ),
 
-                // Cafes section
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Menu",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
+              const SizedBox(height: 20),
+
+              // Menu Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Menu",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AllProductsView(),
+                        ),
+                      );
+                    },
+                    child: const Text(
                       "See All",
                       style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 12),
-                // Browse Menu Grid
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  physics: NeverScrollableScrollPhysics(),
-                  childAspectRatio: 1.2,
-                  children: [
-                    _buildMenuTile(Icons.local_cafe, "Coffee"),
-                    _buildMenuTile(Icons.icecream, "Cold Beverages"),
-                    _buildMenuTile(Icons.cake, "Desserts"),
-                    _buildMenuTile(Icons.restaurant_menu, "Full Menu"),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                physics: const NeverScrollableScrollPhysics(),
+                childAspectRatio: 1.2,
+                children: const [
+                  _buildMenuTile(Icons.local_cafe, "Coffee"),
+                  _buildMenuTile(Icons.icecream, "Cold Beverages"),
+                  _buildMenuTile(Icons.cake, "Desserts"),
+                  _buildMenuTile(Icons.restaurant_menu, "Full Menu"),
+                ],
+              ),
 
-                // Cafe cards (updated)
-                // Wrap(
-                //       spacing: 12,
-                //       runSpacing: 12,
-                //       children: List.generate(10, (index) =>
-                //         SizedBox(
-                //           width: (MediaQuery.of(context).size.width - 44) / 2,
-                //           child: CafeCard(),
-                //         ),
-                //       ),
-                //     ),
-                SizedBox(height: 5),
-                SizedBox(height: 20),
-                Text(
-                  "Your Orders",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 4, // Update this count as needed
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: AssetImage(
-                              "assets/image/food_banner.jpg",
-                            ), // Use your own image path
-                            radius: 25,
+              const SizedBox(height: 5),
+              const SizedBox(height: 20),
+
+              // Your Orders Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Your Orders",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      final userId = prefs.getString('user_id');
+
+                      if (userId != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => OrderHistoryPage(userId: userId),
                           ),
-                          title: Text("Order #${index + 1}"),
-                          onTap: () {
-                            // Add tap logic here later if needed
-                          },
-                        ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('User ID not found')),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "See more",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w500,
                       ),
-                    );
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              if (userId == null)
+                const Center(child: CircularProgressIndicator())
+              else
+                BlocBuilder<OrderViewModel, OrderState>(
+                  builder: (context, orderState) {
+                    if (orderState is OrderLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (orderState is OrderFailure) {
+                      return Center(
+                        child: Text(
+                          'Failed to load orders: ${orderState.message}',
+                        ),
+                      );
+                    } else if (orderState is OrderLoaded) {
+                      if (orderState.orders.isEmpty) {
+                        return const Center(child: Text('No orders found'));
+                      }
+                      return FourOrderView(
+                        orders: orderState.orders,
+                        onTapOrder: (order) {
+                          // TODO: handle tap on order
+                        },
+                      );
+                    }
+                    return const SizedBox.shrink();
                   },
                 ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
     );
   }
-}
 
-class CafeCard extends StatelessWidget {
-  const CafeCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildProductTile(ProductEntity product) {
     return Container(
-      width: 100,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade300,
-            blurRadius: 5,
-            offset: Offset(0, 2),
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Image.asset("assets/image/login_image.jpg", height: 100),
+          Expanded(
+            child:
+                product.imageUrl != null
+                    ? Image.network(
+                      product.imageUrl!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    )
+                    : const Icon(
+                      Icons.image_not_supported,
+                      size: 50,
+                      color: Colors.grey,
+                    ),
           ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Color(0xFFA62123),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(8),
-                bottomRight: Radius.circular(8),
-              ),
-            ),
-            child: TextButton(
-              onPressed: () {},
-              child: Text("View", style: TextStyle(color: Colors.white)),
+          const SizedBox(height: 10),
+          Text(
+            product.name,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            'Rs ${product.price.toString()}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.blue[600],
             ),
           ),
+          const SizedBox(height: 10),
         ],
       ),
     );
   }
 }
 
-Widget _buildMenuTile(IconData icon, String title) {
-  return Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.2),
-          blurRadius: 4,
-          offset: Offset(0, 3),
-        ),
-      ],
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, size: 40, color: Colors.black87),
-        SizedBox(height: 10),
-        Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
-      ],
-    ),
-  );
+class _buildMenuTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const _buildMenuTile(this.icon, this.title, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 40, color: Colors.black87),
+          const SizedBox(height: 10),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
 }

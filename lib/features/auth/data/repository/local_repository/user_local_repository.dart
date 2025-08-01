@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:servzz/core/error/failure.dart';
 import 'package:servzz/features/auth/data/data_source/local_datasource/user_local_datasource.dart';
+import 'package:servzz/features/auth/data/model/login_response_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 import 'package:servzz/features/auth/domain/repository/user_repository.dart';
 
@@ -29,6 +30,17 @@ class UserLocalRepository implements IUserRepository {
       return Left(LocalDatabaseFailure(message: "Failed to login: $e"));
     }
   }
+  //   Future<Either<Failure, LoginResponseModel>> loginUser(
+  //   String username,
+  //   String password,
+  // ) async {
+  //   try {
+  //     final result = await _userLocalDatasource.loginUser(username, password);
+  //     return Right(result);
+  //   } catch (e) {
+  //     return Left(LocalDatabaseFailure(message: "Failed to login: $e"));
+  //   }
+  // }
 
   @override
   Future<Either<Failure, void>> registerUser(UserEntity student) async {
@@ -43,6 +55,15 @@ class UserLocalRepository implements IUserRepository {
   @override
   Future<Either<Failure, String>> uploadProfilePicture(File file) {
     // TODO: implement uploadProfilePicture
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> updateUser(
+    UserEntity userData, {
+    File? profileImage,
+  }) {
+    // TODO: implement updateUser
     throw UnimplementedError();
   }
 }
