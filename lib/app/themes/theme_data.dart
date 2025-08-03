@@ -6,22 +6,9 @@ ThemeData getApplicationTheme() {
   return ThemeData(
     useMaterial3: false,
     primarySwatch: Colors.deepPurple,
-    scaffoldBackgroundColor: Colors.blueGrey,
+    scaffoldBackgroundColor: Colors.blueGrey[50],
     fontFamily: 'Rufina Bold',
 
-    // elevatedButtonTheme: ElevatedButtonThemeData(
-    //   style: ElevatedButton.styleFrom(
-    //     textStyle: const TextStyle(
-    //       fontSize: 30,
-    //       color: Colors.greenAccent,
-    //       fontWeight: FontWeight.w600,
-    //       ),
-    //     backgroundColor: Color(0xFFA62123),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(5),
-    //        ),
-    //   ),
-    // ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.white,
@@ -40,7 +27,7 @@ ThemeData getApplicationTheme() {
       shadowColor: Colors.black54,
       titleTextStyle: TextStyle(
         fontSize: 15,
-        color: Colors.black,
+        color: Color.fromARGB(255, 255, 255, 255),
         fontWeight: FontWeight.bold,
       ),
     ),

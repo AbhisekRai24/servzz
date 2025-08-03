@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:servzz/core/network/hive_service.dart';
 import 'package:servzz/features/auth/data/data_source/user_data_source.dart';
+
 import 'package:servzz/features/auth/data/model/user_hive_model.dart';
 import 'package:servzz/features/auth/domain/entity/user_entity.dart';
 
@@ -24,7 +25,7 @@ class UserLocalDatasource implements IUserDatasource {
       throw Exception("Login failed: $e");
     }
   }
-
+  
   @override
   Future<void> registerUser(UserEntity user) async {
     try {
@@ -45,6 +46,12 @@ class UserLocalDatasource implements IUserDatasource {
   @override
   Future<String> uploadProfilePicture(File file) {
     // TODO: implement uploadProfilePicture
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<UserEntity> updateUser(UserEntity userData, {File? profileImage}) {
+    // TODO: implement updateUser
     throw UnimplementedError();
   }
 }

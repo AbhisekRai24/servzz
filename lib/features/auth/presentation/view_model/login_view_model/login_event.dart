@@ -15,6 +15,12 @@ class NavigateToHomeViewEvent extends LoginEvent {
   NavigateToHomeViewEvent({required this.context});
 }
 
+class FetchCurrentUserEvent extends LoginEvent {
+  final BuildContext context;
+
+  FetchCurrentUserEvent({required this.context});
+}
+
 class LoginWithEmailAndPasswordEvent extends LoginEvent {
   final BuildContext context;
   final String email;

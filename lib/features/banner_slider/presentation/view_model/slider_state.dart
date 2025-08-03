@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:servzz/features/home/presentation/view_model/banner_slider.dart';
+import 'package:servzz/features/banner_slider/presentation/view_model/banner_slider.dart';
 
 class SliderState extends State<BannerSlider> {
   final PageController _pageController = PageController(viewportFraction: 0.95);

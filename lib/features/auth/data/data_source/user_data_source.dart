@@ -5,8 +5,10 @@ abstract interface class IUserDatasource {
   Future<void> registerUser(UserEntity userData);
 
   Future<String> loginUser(String email, String password);
+  // Future<LoginResponseModel> loginUser(String email, String password);
 
   Future<String> uploadProfilePicture(File file);
 
   Future<UserEntity> getCurrentUser();
+  Future<UserEntity> updateUser(UserEntity userData, {File? profileImage});
 }
