@@ -13,7 +13,14 @@ ProductApiModel _$ProductApiModelFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String?,
       imageUrl: json['productImage'] as String?,
       price: (json['price'] as num).toDouble(),
-      categoryId: json['categoryId'] as String?,
+      category: json['category'] == null
+          ? null
+          : CategoryApiModel.fromJson(json['category'] as Map<String, dynamic>),
+      sellerId: json['sellerId'] as String?,
+      addons: (json['addons'] as List<dynamic>?)
+              ?.map((e) => AddonApiModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$ProductApiModelToJson(ProductApiModel instance) =>
@@ -23,5 +30,7 @@ Map<String, dynamic> _$ProductApiModelToJson(ProductApiModel instance) =>
       'description': instance.description,
       'productImage': instance.imageUrl,
       'price': instance.price,
-      'categoryId': instance.categoryId,
+      'category': instance.category,
+      'sellerId': instance.sellerId,
+      'addons': instance.addons,
     };
