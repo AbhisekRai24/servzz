@@ -19,6 +19,18 @@ ThemeData getApplicationTheme() {
         elevation: 4,
       ),
     ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: const Color.fromARGB(
+        255,
+        23,
+        35,
+        53,
+      ), // ✅ dark blue background
+      selectedItemColor: Colors.white, // ✅ white selected item
+      unselectedItemColor: Colors.white70, // ✅ faded white for unselected
+      type: BottomNavigationBarType.fixed, // ✅ ensures all items are visible
+      elevation: 8, // optional shadow
+    ),
 
     appBarTheme: const AppBarTheme(
       centerTitle: true,

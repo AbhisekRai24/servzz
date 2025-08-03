@@ -132,9 +132,6 @@ class _HomeViewState extends State<HomeView> {
               state.views.isEmpty
                   ? const SizedBox.shrink()
                   : BottomNavigationBar(
-                    backgroundColor: Colors.black,
-                    selectedItemColor: Colors.redAccent,
-                    unselectedItemColor: Colors.blue[900],
                     currentIndex: state.selectedIndex,
                     onTap: context.read<HomeViewModel>().onTabTapped,
                     items: const [
